@@ -14,5 +14,6 @@ export const updateTeamContainer = () => {
 };
 
 export const updateNodeValues = () => {
-  console.log('hey');
+  Store.nodes.updateNodeValues();
+
 };

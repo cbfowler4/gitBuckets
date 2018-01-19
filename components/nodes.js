@@ -9,7 +9,7 @@ class Nodes {
     this.svg = svg;
     this.width = width;
     this.height = height;
-    this.createNodes();
+    this.nodeValues = this.createNodes();
     this.force = this.createForce();
 
     this.handleTick = this.handleTick.bind(this);
@@ -20,6 +20,54 @@ class Nodes {
   }
 
   createNodes() {
+    const nodeValues = this.getNodeValuesFromStore();
+    const selectedNodes = this.selectAllNodes();
+
+    selectedNodes
+      .data(nodeValues)
+      .enter().append("circle")
+      .attr("r", function(d) { return d.radius; })
+      .attr('id', function(d) { return d.teamName; })
+      .style("fill", function(d) { return d.color; })
+      .style('stroke', function(d) {return d.stroke;})
+      .style('stroke-width', 2);
+
+    this.svg.selectAll("circle")
+      .on('mouseover', this.handleMouseover);
+      // .on('mouseout', this.handleMouseout);
+
+    return nodeValues;
+  }
+
+
+  createForce() {
+    const force = d3.layout.force()
+        .gravity(.1)
+        .charge(function(d, i) {
+          return i ? -d.radius*9 : 0; })
+        .nodes(this.nodeValues)
+        .size([this.width, this.height]);
+    force.start();
+    return force;
+  }
+
+  handleTick(e) {
+    let q = d3.geom.quadtree(this.nodeValues),
+        i = 0,
+        j = 0,
+        n = this.nodeValues.length;
+
+    while (++i < n) q.visit(collide(this.nodeValues[i]));
+    while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
+
+    this.svg.selectAll("circle")
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+
+    this.force.resume(.1);
+  }
+
+  getNodeValuesFromStore() {
     let nodes = Store.seasonData[Store.selectedYear].map((team) => {
       return {
         radius: team[0].w*.7,
@@ -31,48 +79,33 @@ class Nodes {
         losses: team[0].l
       };
     });
-
-    this.svg.selectAll("circle")
-      .data(nodes)
-      .enter().append("circle")
-      .attr("r", function(d) { return d.radius; })
-      .attr('id', function(d) { return d.teamName; })
-      .style("fill", function(d) { return d.color; })
-      .style('stroke', function(d) {return d.stroke;})
-      .style('stroke-width', 2);
-
-    this.svg.selectAll("circle")
-      .on('mouseover', this.handleMouseover);
-      // .on('mouseout', this.handleMouseout);
-    Store.nodes = nodes;
+    return nodes;
   }
 
-
-  createForce() {
-    const force = d3.layout.force()
-        .gravity(.1)
-        .charge(function(d, i) {
-          return i ? -d.radius*9 : 0; })
-        .nodes(Store.nodes)
-        .size([this.width, this.height]);
-    force.start();
-    return force;
+  selectAllNodes () {
+    return this.svg.selectAll("circle");
   }
 
-  handleTick(e) {
-    let q = d3.geom.quadtree(Store.nodes),
-        i = 0,
-        j = 0,
-        n = Store.nodes.length;
+  updateNodeValues() {
+    const nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
 
-    while (++i < n) q.visit(collide(Store.nodes[i]));
-    while (++j < n) boundaries(Store.nodes[j], this.width, this.height);
+    nodes.exit().remove();
 
-    this.svg.selectAll("circle")
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
 
-    this.force.resume(.1);
+    nodes
+      .attr("r", function(d) {
+        return d.radius; });
+
+    debugger
+
+    //
+    // nodes.enter().append('circle')
+    //   .attr('id', function(d) { return d.teamName; })
+    //   .attr("r", function(d) { return d.radius; })
+    //   .style("fill", function(d) { return d.color; })
+    //   .style('stroke', function(d) {return d.stroke;})
+    //   .style('stroke-width', 2);
+
   }
 
   handleMouseover(d) {

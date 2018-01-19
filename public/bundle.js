@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var svg = d3.select("#svg-team-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
 
   _store2.default.seasonData = _data2.default;
-  new _nodes2.default(svg, width, height);
+  _store2.default.nodes = new _nodes2.default(svg, width, height);
 
   var slider = new _slider2.default();
 
@@ -121,6 +121,21 @@ document.addEventListener('DOMContentLoaded', function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+var seasonData2 = {
+    2013: {
+        1610612765: {
+            teamName: 'Pistons',
+            w: 20,
+            l: 53
+        } },
+    2014: {
+        1610612765: {
+            teamName: 'Pistons',
+            w: 35,
+            l: 50
+        } }
+};
+
 var seasonData = { 2013: [[{ teamId: 1610612765,
         seasonYear: '2013-14',
         teamCity: 'Detroit',
@@ -1127,7 +1142,7 @@ var Nodes = function () {
     this.svg = svg;
     this.width = width;
     this.height = height;
-    this.createNodes();
+    this.nodeValues = this.createNodes();
     this.force = this.createForce();
 
     this.handleTick = this.handleTick.bind(this);
@@ -1140,19 +1155,10 @@ var Nodes = function () {
   _createClass(Nodes, [{
     key: 'createNodes',
     value: function createNodes() {
-      var nodes = _store2.default.seasonData[_store2.default.selectedYear].map(function (team) {
-        return {
-          radius: team[0].w * .7,
-          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
-          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
-          teamName: team[0].teamName,
-          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
-          wins: team[0].w,
-          losses: team[0].l
-        };
-      });
+      var nodeValues = this.getNodeValuesFromStore();
+      var selectedNodes = this.selectAllNodes();
 
-      this.svg.selectAll("circle").data(nodes).enter().append("circle").attr("r", function (d) {
+      selectedNodes.data(nodeValues).enter().append("circle").attr("r", function (d) {
         return d.radius;
       }).attr('id', function (d) {
         return d.teamName;
@@ -1164,29 +1170,30 @@ var Nodes = function () {
 
       this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
       // .on('mouseout', this.handleMouseout);
-      _store2.default.nodes = nodes;
+
+      return nodeValues;
     }
   }, {
     key: 'createForce',
     value: function createForce() {
       var force = d3.layout.force().gravity(.1).charge(function (d, i) {
         return i ? -d.radius * 9 : 0;
-      }).nodes(_store2.default.nodes).size([this.width, this.height]);
+      }).nodes(this.nodeValues).size([this.width, this.height]);
       force.start();
       return force;
     }
   }, {
     key: 'handleTick',
     value: function handleTick(e) {
-      var q = d3.geom.quadtree(_store2.default.nodes),
+      var q = d3.geom.quadtree(this.nodeValues),
           i = 0,
           j = 0,
-          n = _store2.default.nodes.length;
+          n = this.nodeValues.length;
 
       while (++i < n) {
-        q.visit((0, _movements.collide)(_store2.default.nodes[i]));
+        q.visit((0, _movements.collide)(this.nodeValues[i]));
       }while (++j < n) {
-        (0, _movements.boundaries)(_store2.default.nodes[j], this.width, this.height);
+        (0, _movements.boundaries)(this.nodeValues[j], this.width, this.height);
       }this.svg.selectAll("circle").attr("cx", function (d) {
         return d.x;
       }).attr("cy", function (d) {
@@ -1194,6 +1201,48 @@ var Nodes = function () {
       });
 
       this.force.resume(.1);
+    }
+  }, {
+    key: 'getNodeValuesFromStore',
+    value: function getNodeValuesFromStore() {
+      var nodes = _store2.default.seasonData[_store2.default.selectedYear].map(function (team) {
+        return {
+          radius: team[0].w * .7,
+          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
+          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
+          teamName: team[0].teamName,
+          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
+          wins: team[0].w,
+          losses: team[0].l
+        };
+      });
+      return nodes;
+    }
+  }, {
+    key: 'selectAllNodes',
+    value: function selectAllNodes() {
+      return this.svg.selectAll("circle");
+    }
+  }, {
+    key: 'updateNodeValues',
+    value: function updateNodeValues() {
+      var nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
+
+      nodes.exit().remove();
+
+      nodes.attr("r", function (d) {
+        return d.radius;
+      });
+
+      debugger;
+
+      //
+      // nodes.enter().append('circle')
+      //   .attr('id', function(d) { return d.teamName; })
+      //   .attr("r", function(d) { return d.radius; })
+      //   .style("fill", function(d) { return d.color; })
+      //   .style('stroke', function(d) {return d.stroke;})
+      //   .style('stroke-width', 2);
     }
   }, {
     key: 'handleMouseover',
@@ -1302,7 +1351,7 @@ var updateTeamContainer = exports.updateTeamContainer = function updateTeamConta
 };
 
 var updateNodeValues = exports.updateNodeValues = function updateNodeValues() {
-  console.log('hey');
+  _store2.default.nodes.updateNodeValues();
 };
 
 /***/ })

@@ -1,3 +1,18 @@
+const seasonData2 = {
+  2013: {
+    1610612765: {
+      teamName: 'Pistons',
+      w: 20,
+      l: 53
+    }},
+  2014: {
+    1610612765: {
+      teamName: 'Pistons',
+      w: 35,
+      l: 50
+    }}
+  };  
+
 const seasonData = { 2013: [
   [ { teamId: 1610612765,
     seasonYear: '2013-14',

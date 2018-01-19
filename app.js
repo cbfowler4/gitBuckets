@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   .attr("height", height);
 
   Store.seasonData = seasonData;
-  new Nodes(svg, width, height);
+  Store.nodes = new Nodes(svg, width, height);
 
   const slider = new Slider();
 
