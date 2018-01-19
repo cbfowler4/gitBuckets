@@ -5,12 +5,11 @@ import { updateTeamContainer } from '../actions/store_update_actions';
 
 
 class Nodes {
-  constructor(svg, seasonData, width, height) {
+  constructor(svg, width, height) {
     this.svg = svg;
     this.width = width;
     this.height = height;
-    this.seasonData = seasonData;
-    this.nodes = this.createNodes();
+    this.createNodes();
     this.force = this.createForce();
 
     this.handleTick = this.handleTick.bind(this);
@@ -21,7 +20,7 @@ class Nodes {
   }
 
   createNodes() {
-    let nodes = this.seasonData[2013].map((team) => {
+    let nodes = Store.seasonData[Store.selectedYear].map((team) => {
       return {
         radius: team[0].w*.7,
         color: STYLING[team[0].teamName] ? STYLING[team[0].teamName].pri : 'white',
@@ -45,7 +44,7 @@ class Nodes {
     this.svg.selectAll("circle")
       .on('mouseover', this.handleMouseover);
       // .on('mouseout', this.handleMouseout);
-    return nodes;
+    Store.nodes = nodes;
   }
 
 
@@ -54,21 +53,20 @@ class Nodes {
         .gravity(.1)
         .charge(function(d, i) {
           return i ? -d.radius*9 : 0; })
-        .nodes(this.nodes)
+        .nodes(Store.nodes)
         .size([this.width, this.height]);
-
     force.start();
     return force;
   }
 
   handleTick(e) {
-    let q = d3.geom.quadtree(this.nodes),
+    let q = d3.geom.quadtree(Store.nodes),
         i = 0,
         j = 0,
-        n = this.nodes.length;
+        n = Store.nodes.length;
 
-    while (++i < n) q.visit(collide(this.nodes[i]));
-    while (++j < n) boundaries(this.nodes[j], this.width, this.height);
+    while (++i < n) q.visit(collide(Store.nodes[i]));
+    while (++j < n) boundaries(Store.nodes[j], this.width, this.height);
 
     this.svg.selectAll("circle")
         .attr("cx", function(d) { return d.x; })

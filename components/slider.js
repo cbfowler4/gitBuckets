@@ -22,10 +22,10 @@ class Slider {
 
   handleChange() {
     const slider = document.getElementById('year-slider');
-    slider.addEventListener('change', (e)=> {
+    slider.onchange=((e)=> {
       Store.selectedYear = e.target.value;
+      updateNodeValues();
     });
-    updateNodeValues();
   }
 }
 

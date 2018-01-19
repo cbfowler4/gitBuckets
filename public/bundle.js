@@ -83,22 +83,27 @@ var _slider = __webpack_require__(37);
 
 var _slider2 = _interopRequireDefault(_slider);
 
+var _store = __webpack_require__(35);
+
+var _store2 = _interopRequireDefault(_store);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  $.ajax({
-    url: '/data',
-    method: 'get',
-    data: { seasonYear: 2013 }
-  });
+  // $.ajax({
+  //   url: '/data',
+  //   method: 'get',
+  //   data: {seasonYear: 2013}
+  // });
 
   var width = 700;
   var height = 600;
 
   var svg = d3.select("#svg-team-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
 
-  var nodes = new _nodes2.default(svg, _data2.default, width, height);
+  _store2.default.seasonData = _data2.default;
+  new _nodes2.default(svg, width, height);
 
   var slider = new _slider2.default();
 
@@ -1080,7 +1085,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 var store = {
   activeTeam: null,
-  selectedYear: 2013
+  selectedYear: 2013,
+  nodes: null,
+  seasonData: null
 };
 
 exports.default = store;
@@ -1114,14 +1121,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Nodes = function () {
-  function Nodes(svg, seasonData, width, height) {
+  function Nodes(svg, width, height) {
     _classCallCheck(this, Nodes);
 
     this.svg = svg;
     this.width = width;
     this.height = height;
-    this.seasonData = seasonData;
-    this.nodes = this.createNodes();
+    this.createNodes();
     this.force = this.createForce();
 
     this.handleTick = this.handleTick.bind(this);
@@ -1134,7 +1140,7 @@ var Nodes = function () {
   _createClass(Nodes, [{
     key: 'createNodes',
     value: function createNodes() {
-      var nodes = this.seasonData[2013].map(function (team) {
+      var nodes = _store2.default.seasonData[_store2.default.selectedYear].map(function (team) {
         return {
           radius: team[0].w * .7,
           color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
@@ -1158,30 +1164,29 @@ var Nodes = function () {
 
       this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
       // .on('mouseout', this.handleMouseout);
-      return nodes;
+      _store2.default.nodes = nodes;
     }
   }, {
     key: 'createForce',
     value: function createForce() {
       var force = d3.layout.force().gravity(.1).charge(function (d, i) {
         return i ? -d.radius * 9 : 0;
-      }).nodes(this.nodes).size([this.width, this.height]);
-
+      }).nodes(_store2.default.nodes).size([this.width, this.height]);
       force.start();
       return force;
     }
   }, {
     key: 'handleTick',
     value: function handleTick(e) {
-      var q = d3.geom.quadtree(this.nodes),
+      var q = d3.geom.quadtree(_store2.default.nodes),
           i = 0,
           j = 0,
-          n = this.nodes.length;
+          n = _store2.default.nodes.length;
 
       while (++i < n) {
-        q.visit((0, _movements.collide)(this.nodes[i]));
+        q.visit((0, _movements.collide)(_store2.default.nodes[i]));
       }while (++j < n) {
-        (0, _movements.boundaries)(this.nodes[j], this.width, this.height);
+        (0, _movements.boundaries)(_store2.default.nodes[j], this.width, this.height);
       }this.svg.selectAll("circle").attr("cx", function (d) {
         return d.x;
       }).attr("cy", function (d) {
@@ -1259,10 +1264,10 @@ var Slider = function () {
     key: 'handleChange',
     value: function handleChange() {
       var slider = document.getElementById('year-slider');
-      slider.addEventListener('change', function (e) {
+      slider.onchange = function (e) {
         _store2.default.selectedYear = e.target.value;
-      });
-      (0, _store_update_actions.updateNodeValues)();
+        (0, _store_update_actions.updateNodeValues)();
+      };
     }
   }]);
 
@@ -1293,7 +1298,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var updateTeamContainer = exports.updateTeamContainer = function updateTeamContainer() {
   var teamContainer = document.getElementById('team-sidebar');
 
-  console.log(_store2.default.activeTeam);
   teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.teamName : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + _store2.default.activeTeam.wins + '</li>\n      <li>Losses: ' + _store2.default.activeTeam.losses + '</li>\n    </ul>';
 };
 
