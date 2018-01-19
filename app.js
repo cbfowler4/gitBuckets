@@ -2,7 +2,7 @@ import seasonData from './data/data';
 import Nodes from './nodes/nodes';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TeamContainer from './components/team_container';
+import Root from './frontend/components/root';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -12,15 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
     data: {seasonYear: 2013}
   });
 
+
+  const root = document.getElementById("root");
+  ReactDOM.render(<Root />, root);
+
+
   const width = 700;
   const height = 600;
 
-  var svg = d3.select(".main-container").insert("svg", ":first-child")
+  
+  let svg = d3.select("#root").insert("svg", ":first-child")
   .attr("width", width)
   .attr("height", height);
 
   const nodes = new Nodes(svg, seasonData, width, height);
 
-  const teamContainer = document.getElementById("team-sidebar");
-  ReactDOM.render(<TeamContainer />, teamContainer);
 });

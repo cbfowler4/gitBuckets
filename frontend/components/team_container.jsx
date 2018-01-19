@@ -7,7 +7,7 @@ class TeamContainer extends React.Component {
 
   render() {
     return(
-      <div>
+      <div className = 'team-sidebar'>
         <h1>Team Name</h1>
       </div>
     );

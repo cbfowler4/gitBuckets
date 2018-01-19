@@ -956,9 +956,9 @@ var _reactDom = __webpack_require__(22);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _team_container = __webpack_require__(31);
+var _root = __webpack_require__(32);
 
-var _team_container2 = _interopRequireDefault(_team_container);
+var _root2 = _interopRequireDefault(_root);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -970,15 +970,15 @@ document.addEventListener('DOMContentLoaded', function () {
     data: { seasonYear: 2013 }
   });
 
+  var root = document.getElementById("root");
+  _reactDom2.default.render(_react2.default.createElement(_root2.default, null), root);
+
   var width = 700;
   var height = 600;
 
-  var svg = d3.select(".main-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
+  var svg = d3.select("#root").insert("svg", ":first-child").attr("width", width).attr("height", height);
 
   var nodes = new _nodes2.default(svg, _data2.default, width, height);
-
-  var teamContainer = document.getElementById("team-sidebar");
-  _reactDom2.default.render(_react2.default.createElement(_team_container2.default, null), teamContainer);
 });
 
 /***/ }),
@@ -19345,7 +19345,37 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 31 */
+/* 31 */,
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _team_container = __webpack_require__(33);
+
+var _team_container2 = _interopRequireDefault(_team_container);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(_team_container2.default, null)
+  );
+};
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19383,7 +19413,7 @@ var TeamContainer = function (_React$Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        null,
+        { className: 'team-sidebar' },
         _react2.default.createElement(
           'h1',
           null,
