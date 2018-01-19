@@ -9,7 +9,7 @@ svg {
   border: 1px solid rgba(0,0,0,.1);
 }
 
-.main-container {
+#svg-team-container {
   display: flex;
   justify-content: space-between;
   margin: 0 50px;

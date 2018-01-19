@@ -1,7 +1,7 @@
 import { collide, boundaries } from '../util/movements';
 import Store from '../store/store';
 import { STYLING } from '../data/keys';
-import { updateTeamContainer } from '../actions/team_container_actions';
+import { updateTeamContainer } from '../actions/store_update_actions';
 
 
 class Nodes {

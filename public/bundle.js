@@ -75,9 +75,13 @@ var _data = __webpack_require__(15);
 
 var _data2 = _interopRequireDefault(_data);
 
-var _nodes = __webpack_require__(16);
+var _nodes = __webpack_require__(36);
 
 var _nodes2 = _interopRequireDefault(_nodes);
+
+var _slider = __webpack_require__(37);
+
+var _slider2 = _interopRequireDefault(_slider);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -92,9 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
   var width = 700;
   var height = 600;
 
-  var svg = d3.select(".main-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
+  var svg = d3.select("#svg-team-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
 
   var nodes = new _nodes2.default(svg, _data2.default, width, height);
+
+  var slider = new _slider2.default();
 
   var teamContainer = document.getElementById("team-sidebar");
 });
@@ -958,130 +964,6 @@ exports.default = seasonData;
 
 /***/ }),
 
-/***/ 16:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _movements = __webpack_require__(17);
-
-var _store = __webpack_require__(35);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _keys = __webpack_require__(18);
-
-var _team_container_actions = __webpack_require__(34);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Nodes = function () {
-  function Nodes(svg, seasonData, width, height) {
-    _classCallCheck(this, Nodes);
-
-    this.svg = svg;
-    this.width = width;
-    this.height = height;
-    this.seasonData = seasonData;
-    this.nodes = this.createNodes();
-    this.force = this.createForce();
-
-    this.handleTick = this.handleTick.bind(this);
-    this.handleMouseover = this.handleMouseover.bind(this);
-    this.handleMouseout = this.handleMouseout.bind(this);
-
-    this.force.on("tick", this.handleTick);
-  }
-
-  _createClass(Nodes, [{
-    key: 'createNodes',
-    value: function createNodes() {
-      var nodes = this.seasonData[2013].map(function (team) {
-        return {
-          radius: team[0].w * .7,
-          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
-          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
-          teamName: team[0].teamName,
-          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
-          wins: team[0].w,
-          losses: team[0].l
-        };
-      });
-
-      this.svg.selectAll("circle").data(nodes).enter().append("circle").attr("r", function (d) {
-        return d.radius;
-      }).attr('id', function (d) {
-        return d.teamName;
-      }).style("fill", function (d) {
-        return d.color;
-      }).style('stroke', function (d) {
-        return d.stroke;
-      }).style('stroke-width', 2);
-
-      this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
-      // .on('mouseout', this.handleMouseout);
-      return nodes;
-    }
-  }, {
-    key: 'createForce',
-    value: function createForce() {
-      var force = d3.layout.force().gravity(.1).charge(function (d, i) {
-        return i ? -d.radius * 9 : 0;
-      }).nodes(this.nodes).size([this.width, this.height]);
-
-      force.start();
-      return force;
-    }
-  }, {
-    key: 'handleTick',
-    value: function handleTick(e) {
-      var q = d3.geom.quadtree(this.nodes),
-          i = 0,
-          j = 0,
-          n = this.nodes.length;
-
-      while (++i < n) {
-        q.visit((0, _movements.collide)(this.nodes[i]));
-      }while (++j < n) {
-        (0, _movements.boundaries)(this.nodes[j], this.width, this.height);
-      }this.svg.selectAll("circle").attr("cx", function (d) {
-        return d.x;
-      }).attr("cy", function (d) {
-        return d.y;
-      });
-
-      this.force.resume(.1);
-    }
-  }, {
-    key: 'handleMouseover',
-    value: function handleMouseover(d) {
-      _store2.default.activeTeam = d;
-      (0, _team_container_actions.updateTeamContainer)();
-    }
-  }, {
-    key: 'handleMouseout',
-    value: function handleMouseout(d) {
-      _store2.default.activeTeam = null;
-      (0, _team_container_actions.updateTeamContainer)();
-    }
-  }]);
-
-  return Nodes;
-}();
-
-exports.default = Nodes;
-
-/***/ }),
-
 /***/ 17:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1187,7 +1069,7 @@ var DIVISION = {
 
 /***/ }),
 
-/***/ 34:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1196,7 +1078,211 @@ var DIVISION = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateTeamContainer = undefined;
+var store = {
+  activeTeam: null,
+  selectedYear: 2013
+};
+
+exports.default = store;
+
+/***/ }),
+
+/***/ 36:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _movements = __webpack_require__(17);
+
+var _store = __webpack_require__(35);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _keys = __webpack_require__(18);
+
+var _store_update_actions = __webpack_require__(38);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Nodes = function () {
+  function Nodes(svg, seasonData, width, height) {
+    _classCallCheck(this, Nodes);
+
+    this.svg = svg;
+    this.width = width;
+    this.height = height;
+    this.seasonData = seasonData;
+    this.nodes = this.createNodes();
+    this.force = this.createForce();
+
+    this.handleTick = this.handleTick.bind(this);
+    this.handleMouseover = this.handleMouseover.bind(this);
+    this.handleMouseout = this.handleMouseout.bind(this);
+
+    this.force.on("tick", this.handleTick);
+  }
+
+  _createClass(Nodes, [{
+    key: 'createNodes',
+    value: function createNodes() {
+      var nodes = this.seasonData[2013].map(function (team) {
+        return {
+          radius: team[0].w * .7,
+          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
+          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
+          teamName: team[0].teamName,
+          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
+          wins: team[0].w,
+          losses: team[0].l
+        };
+      });
+
+      this.svg.selectAll("circle").data(nodes).enter().append("circle").attr("r", function (d) {
+        return d.radius;
+      }).attr('id', function (d) {
+        return d.teamName;
+      }).style("fill", function (d) {
+        return d.color;
+      }).style('stroke', function (d) {
+        return d.stroke;
+      }).style('stroke-width', 2);
+
+      this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
+      // .on('mouseout', this.handleMouseout);
+      return nodes;
+    }
+  }, {
+    key: 'createForce',
+    value: function createForce() {
+      var force = d3.layout.force().gravity(.1).charge(function (d, i) {
+        return i ? -d.radius * 9 : 0;
+      }).nodes(this.nodes).size([this.width, this.height]);
+
+      force.start();
+      return force;
+    }
+  }, {
+    key: 'handleTick',
+    value: function handleTick(e) {
+      var q = d3.geom.quadtree(this.nodes),
+          i = 0,
+          j = 0,
+          n = this.nodes.length;
+
+      while (++i < n) {
+        q.visit((0, _movements.collide)(this.nodes[i]));
+      }while (++j < n) {
+        (0, _movements.boundaries)(this.nodes[j], this.width, this.height);
+      }this.svg.selectAll("circle").attr("cx", function (d) {
+        return d.x;
+      }).attr("cy", function (d) {
+        return d.y;
+      });
+
+      this.force.resume(.1);
+    }
+  }, {
+    key: 'handleMouseover',
+    value: function handleMouseover(d) {
+      _store2.default.activeTeam = d;
+      (0, _store_update_actions.updateTeamContainer)();
+    }
+  }, {
+    key: 'handleMouseout',
+    value: function handleMouseout(d) {
+      _store2.default.activeTeam = null;
+      (0, _store_update_actions.updateTeamContainer)();
+    }
+  }]);
+
+  return Nodes;
+}();
+
+exports.default = Nodes;
+
+/***/ }),
+
+/***/ 37:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _store = __webpack_require__(35);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _store_update_actions = __webpack_require__(38);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Slider = function () {
+  function Slider() {
+    _classCallCheck(this, Slider);
+
+    this.createSlider();
+    this.handleChange();
+  }
+
+  _createClass(Slider, [{
+    key: 'createSlider',
+    value: function createSlider() {
+      var mainContainer = document.getElementById('main-container');
+      var slider = document.createElement('input');
+      slider.setAttribute('type', 'range');
+      slider.setAttribute('min', '2013');
+      slider.setAttribute('max', '2014');
+      slider.setAttribute('step', '1');
+      slider.setAttribute('id', 'year-slider');
+
+      mainContainer.appendChild(slider);
+      // '<input id="year-slider" type="range" min="2013" max="2014" step="1"/>'
+    }
+  }, {
+    key: 'handleChange',
+    value: function handleChange() {
+      var slider = document.getElementById('year-slider');
+      slider.addEventListener('change', function (e) {
+        _store2.default.selectedYear = e.target.value;
+      });
+      (0, _store_update_actions.updateNodeValues)();
+    }
+  }]);
+
+  return Slider;
+}();
+
+exports.default = Slider;
+
+/***/ }),
+
+/***/ 38:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateNodeValues = exports.updateTeamContainer = undefined;
 
 var _store = __webpack_require__(35);
 
@@ -1211,22 +1297,9 @@ var updateTeamContainer = exports.updateTeamContainer = function updateTeamConta
   teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.teamName : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + _store2.default.activeTeam.wins + '</li>\n      <li>Losses: ' + _store2.default.activeTeam.losses + '</li>\n    </ul>';
 };
 
-/***/ }),
-
-/***/ 35:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var store = {
-  activeTeam: null
+var updateNodeValues = exports.updateNodeValues = function updateNodeValues() {
+  console.log('hey');
 };
-
-exports.default = store;
 
 /***/ })
 

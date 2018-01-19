@@ -13,3 +13,7 @@ export const updateTeamContainer = () => {
     </ul>`
   );
 };
+
+export const updateNodeValues = () => {
+  console.log('hey');
+};
