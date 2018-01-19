@@ -20,8 +20,9 @@ class Nodes {
     let nodes = this.seasonData[2014].map((team) => {
       return {
         radius: team[0].w*.7,
-        color: COLORS[team[0].teamName].pri,
-        stroke: COLORS[team[0].teamName].sec
+        color: COLORS[team[0].teamName] ? COLORS[team[0].teamName].pri : 'white',
+        stroke: COLORS[team[0].teamName] ? COLORS[team[0].teamName].sec : 'black',
+        teamName: team[0].teamName
       };
     });
 
@@ -29,6 +30,7 @@ class Nodes {
         .data(nodes)
       .enter().append("circle")
         .attr("r", function(d) { return d.radius; })
+        .attr('id', function(d) { return d.teamName; })
         .style("fill", function(d) { return d.color; })
         .style('stroke', function(d) {return d.stroke;})
         .style('stroke-width', 2);

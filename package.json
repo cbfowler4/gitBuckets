@@ -4,12 +4,18 @@
   "description": "An NBA win loss data visualization tool built using React and D3. It uses the D3 library to create an interactive data visualization of NBA franchise wins and losses each year since the creation of the NBA. Teams are represented by colored circles. The circles colors correspond to the primary and secondary colors of the team. On hover of the circle the team logo appears at the center of the circle. An info window appears on the left hand side of the screen displaying the team win loss info used to create the visualization. The wins and losses translate to the corresponding size and location of the circles. The more wins, the larger the circle. The visualization uses an element of gravity, larger circles will push their way into the center of the screen. Smaller circles will be pushed outward onto the edges.",
   "main": "app.js",
   "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
     "d3": "^4.12.2",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
     "nba": "^4.1.0",
     "net": "^1.0.2",
-    "react": "^16.2.0"
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   },
   "devDependencies": {},
   "scripts": {
