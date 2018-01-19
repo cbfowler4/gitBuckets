@@ -1,4 +1,6 @@
 import { collide } from '../util/movements';
+import { COLORS } from '../data/keys';
+
 
 class Nodes {
   constructor() {
@@ -8,16 +10,16 @@ class Nodes {
   createNodes(seasonData, width, height) {
     const nodes = seasonData[2014].map((team) => {
       return {
-        radius: team[0].w*.6,
-        color: 'blue',
-        stroke: 'red'
+        radius: team[0].w*.5,
+        color: COLORS[team[0].teamName].pri,
+        stroke: COLORS[team[0].teamName].sec
       };
     });
 
     var force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
-          return i ? -(d.radius*d.radius)+150 : 0; })
+          return i ? -(d.radius*d.radius-100) : 0; })
         .nodes(nodes)
         .size([width, height]);
 
@@ -32,7 +34,8 @@ class Nodes {
       .enter().append("circle")
         .attr("r", function(d) { return d.radius; })
         .style("fill", function(d) { return d.color; })
-        .style('stroke', function(d) {return d.stroke;});
+        .style('stroke', function(d) {return d.stroke;})
+        .style('stroke-width', 2);
 
     force.on("tick", function(e) {
       var q = d3.geom.quadtree(nodes),

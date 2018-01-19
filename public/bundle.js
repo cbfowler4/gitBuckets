@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // });
 
   const width = 800;
-  const height = 800;
+  const height = 600;
 
   const nodes = new __WEBPACK_IMPORTED_MODULE_1__nodes_nodes__["a" /* default */];
 
@@ -562,6 +562,9 @@ const seasonData = { 2014: [[ { teamId: 1610612749,
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_movements__ = __webpack_require__(465);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__data_keys__ = __webpack_require__(466);
+
+
 
 
 class Nodes {
@@ -572,16 +575,16 @@ class Nodes {
   createNodes(seasonData, width, height) {
     const nodes = seasonData[2014].map((team) => {
       return {
-        radius: team[0].w*.6,
-        color: 'blue',
-        stroke: 'red'
+        radius: team[0].w*.5,
+        color: __WEBPACK_IMPORTED_MODULE_1__data_keys__["a" /* COLORS */][team[0].teamName].pri,
+        stroke: __WEBPACK_IMPORTED_MODULE_1__data_keys__["a" /* COLORS */][team[0].teamName].sec
       };
     });
 
     var force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
-          return i ? -(d.radius*d.radius)+150 : 0; })
+          return i ? -(d.radius*d.radius-100) : 0; })
         .nodes(nodes)
         .size([width, height]);
 
@@ -596,7 +599,8 @@ class Nodes {
       .enter().append("circle")
         .attr("r", function(d) { return d.radius; })
         .style("fill", function(d) { return d.color; })
-        .style('stroke', function(d) {return d.stroke;});
+        .style('stroke', function(d) {return d.stroke;})
+        .style('stroke-width', 2);
 
     force.on("tick", function(e) {
       var q = d3.geom.quadtree(nodes),
@@ -648,6 +652,91 @@ const collide = (node) => {
 };
 /* harmony export (immutable) */ __webpack_exports__["a"] = collide;
 
+
+
+/***/ }),
+
+/***/ 466:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const TEAMS = [
+ 1610612738,
+ 1610612751,
+ 1610612752,
+ 1610612755,
+ 1610612761,
+ 1610612741,
+ 1610612739,
+ 1610612765,
+ 1610612754,
+ 1610612749,
+ 1610612737,
+ 1610612766,
+ 1610612748,
+ 1610612753,
+ 1610612764,
+ 1610612743,
+ 1610612750,
+ 1610612760,
+ 1610612757,
+ 1610612762,
+ 1610612744,
+ 1610612746,
+ 1610612747,
+ 1610612756,
+ 1610612758,
+ 1610612742,
+ 1610612745,
+ 1610612763,
+ 1610612740,
+ 1610612759];
+
+const COLORS = {
+  'Bucks': {pri: '#E03A3E', sec: '#C4D600'},
+  'Cavaliers': {pri: '#6F2633', sec: '#FFB81C'},
+  'Knicks': {pri: '#F58426', sec: '#006BB6'},
+  '76ers': {pri: '#006BB6', sec: '#ED174C'},
+  'Timberwolves': {pri: '#002B5C', sec: '#005083'},
+  'Celtics': {pri: '#008248', sec: '#BA9653'},
+  'Pistons': {pri: '#ED174C', sec: '#0067B1'},
+  'Heat': {pri: '#98002E', sec: '#000000'},
+  'Pacers': {pri: '#002D62', sec: '#FDBB30'},
+  'Nuggets': {pri: '#5091CD', sec: '#FDB927'},
+  'Magic': {pri: '#0B77BD', sec: '#C2CCD2'},
+  'Hornets': {pri: '#00788C', sec: '#1D1160'},
+  'Raptors': {pri: '#CD1141', sec: '#A0A0A3'},
+  'Hawks': {pri: '#E03A3E', sec: '#25282A'},
+  'Wizards': {pri: '#002B5C', sec: '#E31837'},
+  'Suns': {pri: '#E56020', sec: '#1D1160'},
+  'Warriors': {pri: '#FFCD34', sec: '#243E90'},
+  'Lakers': {pri: '#FDB927', sec: '#552583'},
+  'Jazz': {pri: '#0C2340', sec: '#00471B'},
+  'Clippers': {pri: '#ED174C', sec: '#006BB6'},
+  'Kings': {pri: '#5A2D81', sec: '#63727A'},
+  'Pelicans': {pri: '#002B5C', sec: '#B4975A'},
+  'Spurs': {pri: '#C4CED4', sec: '#000000'},
+  'Thunder': {pri: '#007AC1', sec: '#F05133'},
+  'Grizzlies': {pri: '#6189B9', sec: '#00285E'},
+  'Rockets': {pri: '#CE1141', sec: '#000000'},
+  'Nets': {pri: '#000000', sec: '#FFFFFF'},
+  'Bulls': {pri: '#CE1141', sec: '#000000'},
+  'Mavericks': {pri: '#007DC5', sec: '#C4CED4'},
+  'Trail Blazers': {pri: '#E13A3E', sec: '#C4CED4'},
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = COLORS;
+
+
+const DIVISION = {
+'null': null,
+'Atlantic': 'Atlantic',
+'Central': 'Central',
+'Northwest': 'Northwest',
+'Pacific': 'Pacific',
+'Southeast': 'Southeast',
+'Southwest': 'Southwest',
+'East': 'East',
+'West': 'West'};
 
 
 /***/ })
