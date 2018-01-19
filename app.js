@@ -12,9 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const width = 700;
   const height = 600;
 
-  const nodes = new Nodes;
+  var svg = d3.select("body").append("svg")
+  .attr("width", width)
+  .attr("height", height);
 
-  nodes.createNodes(seasonData, width, height);
+  const nodes = new Nodes(svg, seasonData, width, height);
 
 
 });

@@ -86,9 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const width = 700;
   const height = 600;
 
-  const nodes = new __WEBPACK_IMPORTED_MODULE_1__nodes_nodes__["a" /* default */];
+  var svg = d3.select("body").append("svg")
+  .attr("width", width)
+  .attr("height", height);
 
-  nodes.createNodes(__WEBPACK_IMPORTED_MODULE_0__data_data__["a" /* default */], width, height);
+  const nodes = new __WEBPACK_IMPORTED_MODULE_1__nodes_nodes__["a" /* default */](svg, __WEBPACK_IMPORTED_MODULE_0__data_data__["a" /* default */], width, height);
 
 
 });
@@ -568,12 +570,21 @@ const seasonData = { 2014: [[ { teamId: 1610612749,
 
 
 class Nodes {
-  constructor() {
+  constructor(svg, seasonData, width, height) {
+    this.svg = svg;
+    this.width = width;
+    this.height = height;
+    this.seasonData = seasonData;
+    this.nodes = this.createNodes();
+    this.force = this.createForce();
 
+    this.handleTick = this.handleTick.bind(this);
+
+    this.force.on("tick", this.handleTick);
   }
 
-  createNodes(seasonData, width, height) {
-    const nodes = seasonData[2014].map((team) => {
+  createNodes() {
+    let nodes = this.seasonData[2014].map((team) => {
       return {
         radius: team[0].w*.7,
         color: __WEBPACK_IMPORTED_MODULE_1__data_keys__["a" /* COLORS */][team[0].teamName].pri,
@@ -581,20 +592,7 @@ class Nodes {
       };
     });
 
-    var force = d3.layout.force()
-        .gravity(.1)
-        .charge(function(d, i) {
-          return i ? -d.radius*9 : 0; })
-        .nodes(nodes)
-        .size([width, height]);
-
-    force.start();
-
-    var svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-    svg.selectAll("circle")
+    this.svg.selectAll("circle")
         .data(nodes)
       .enter().append("circle")
         .attr("r", function(d) { return d.radius; })
@@ -602,20 +600,36 @@ class Nodes {
         .style('stroke', function(d) {return d.stroke;})
         .style('stroke-width', 2);
 
-    force.on("tick", function(e) {
-      var q = d3.geom.quadtree(nodes),
-          i = 0,
-          j = 0,
-          n = nodes.length;
+    return nodes;
+  }
 
-      while (++i < n) q.visit(Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["b" /* collide */])(nodes[i]));
-      while (++j < n) Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["a" /* boundaries */])(nodes[j], width, height);
 
-      svg.selectAll("circle")
-          .attr("cx", function(d) { return d.x; })
-          .attr("cy", function(d) { return d.y; });
-      force.resume(.1);
-    });
+  createForce() {
+    const force = d3.layout.force()
+        .gravity(.1)
+        .charge(function(d, i) {
+          return i ? -d.radius*9 : 0; })
+        .nodes(this.nodes)
+        .size([this.width, this.height]);
+
+    force.start();
+    return force;
+  }
+
+  handleTick(e) {
+    let q = d3.geom.quadtree(this.nodes),
+        i = 0,
+        j = 0,
+        n = this.nodes.length;
+
+    while (++i < n) q.visit(Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["b" /* collide */])(this.nodes[i]));
+    while (++j < n) Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["a" /* boundaries */])(this.nodes[j], this.width, this.height);
+
+    this.svg.selectAll("circle")
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+
+    this.force.resume(.1);
   }
 }
 
