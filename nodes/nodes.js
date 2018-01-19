@@ -1,6 +1,6 @@
 import { collide, boundaries } from '../util/movements';
 import Store from '../store/store';
-import { COLORS } from '../data/keys';
+import { STYLING } from '../data/keys';
 import { updateTeamContainer } from '../actions/team_container_actions';
 
 
@@ -24,9 +24,12 @@ class Nodes {
     let nodes = this.seasonData[2013].map((team) => {
       return {
         radius: team[0].w*.7,
-        color: COLORS[team[0].teamName] ? COLORS[team[0].teamName].pri : 'white',
-        stroke: COLORS[team[0].teamName] ? COLORS[team[0].teamName].sec : 'black',
-        teamName: team[0].teamName
+        color: STYLING[team[0].teamName] ? STYLING[team[0].teamName].pri : 'white',
+        stroke: STYLING[team[0].teamName] ? STYLING[team[0].teamName].sec : 'black',
+        teamName: team[0].teamName,
+        logo: STYLING[team[0].teamName] ? STYLING[team[0].teamName].logo : null,
+        wins: team[0].w,
+        losses: team[0].l
       };
     });
 
@@ -40,8 +43,8 @@ class Nodes {
       .style('stroke-width', 2);
 
     this.svg.selectAll("circle")
-      .on('mouseover', this.handleMouseover)
-      .on('mouseout', this.handleMouseout);
+      .on('mouseover', this.handleMouseover);
+      // .on('mouseout', this.handleMouseout);
     return nodes;
   }
 
@@ -75,7 +78,7 @@ class Nodes {
   }
 
   handleMouseover(d) {
-    Store.activeTeam = d.teamName;
+    Store.activeTeam = d;
     updateTeamContainer();
   }
 

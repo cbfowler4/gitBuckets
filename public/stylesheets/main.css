@@ -23,6 +23,11 @@ svg {
 
 }
 
+#team-sidebar img {
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+}
 
 circle:hover {
   opacity: .3;

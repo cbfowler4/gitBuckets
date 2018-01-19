@@ -1008,9 +1008,12 @@ var Nodes = function () {
       var nodes = this.seasonData[2013].map(function (team) {
         return {
           radius: team[0].w * .7,
-          color: _keys.COLORS[team[0].teamName] ? _keys.COLORS[team[0].teamName].pri : 'white',
-          stroke: _keys.COLORS[team[0].teamName] ? _keys.COLORS[team[0].teamName].sec : 'black',
-          teamName: team[0].teamName
+          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
+          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
+          teamName: team[0].teamName,
+          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
+          wins: team[0].w,
+          losses: team[0].l
         };
       });
 
@@ -1024,7 +1027,8 @@ var Nodes = function () {
         return d.stroke;
       }).style('stroke-width', 2);
 
-      this.svg.selectAll("circle").on('mouseover', this.handleMouseover).on('mouseout', this.handleMouseout);
+      this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
+      // .on('mouseout', this.handleMouseout);
       return nodes;
     }
   }, {
@@ -1060,7 +1064,7 @@ var Nodes = function () {
   }, {
     key: 'handleMouseover',
     value: function handleMouseover(d) {
-      _store2.default.activeTeam = d.teamName;
+      _store2.default.activeTeam = d;
       (0, _team_container_actions.updateTeamContainer)();
     }
   }, {
@@ -1136,38 +1140,38 @@ var collide = exports.collide = function collide(node) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var COLORS = exports.COLORS = {
-  'Bucks': { pri: '#E03A3E', sec: '#C4D600', logo: 'https://teamcolorcodes.com/wp-content/uploads/2015/02/atlanta_hawks_logo.jpg' },
-  'Cavaliers': { pri: '#6F2633', sec: '#FFB81C' },
-  'Knicks': { pri: '#F58426', sec: '#006BB6' },
-  '76ers': { pri: '#006BB6', sec: '#ED174C' },
-  'Timberwolves': { pri: '#002B5C', sec: '#005083' },
-  'Celtics': { pri: '#008248', sec: '#BA9653' },
-  'Pistons': { pri: '#ED174C', sec: '#0067B1' },
-  'Heat': { pri: '#98002E', sec: '#000000' },
-  'Pacers': { pri: '#002D62', sec: '#FDBB30' },
-  'Nuggets': { pri: '#5091CD', sec: '#FDB927' },
-  'Magic': { pri: '#0B77BD', sec: '#C2CCD2' },
-  'Hornets': { pri: '#00788C', sec: '#1D1160' },
-  'Raptors': { pri: '#CD1141', sec: '#A0A0A3' },
-  'Hawks': { pri: '#E03A3E', sec: '#25282A' },
-  'Wizards': { pri: '#002B5C', sec: '#E31837' },
-  'Suns': { pri: '#E56020', sec: '#1D1160' },
-  'Warriors': { pri: '#FFCD34', sec: '#243E90' },
-  'Lakers': { pri: '#FDB927', sec: '#552583' },
-  'Jazz': { pri: '#0C2340', sec: '#00471B' },
-  'Clippers': { pri: '#ED174C', sec: '#006BB6' },
-  'Kings': { pri: '#5A2D81', sec: '#63727A' },
-  'Pelicans': { pri: '#002B5C', sec: '#B4975A' },
-  'Spurs': { pri: '#C4CED4', sec: '#000000' },
-  'Thunder': { pri: '#007AC1', sec: '#F05133' },
-  'Grizzlies': { pri: '#6189B9', sec: '#00285E' },
-  'Rockets': { pri: '#CE1141', sec: '#000000' },
-  'Nets': { pri: '#000000', sec: '#FFFFFF' },
-  'Bulls': { pri: '#CE1141', sec: '#000000' },
-  'Mavericks': { pri: '#007DC5', sec: '#C4CED4' },
-  'Trail Blazers': { pri: '#E13A3E', sec: '#C4CED4' },
-  'Bobcats': { pri: '#00295b', sec: '#5097d2' }
+var STYLING = exports.STYLING = {
+  'Bucks': { pri: '#E03A3E', sec: '#C4D600', logo: 'bucks.png' },
+  'Cavaliers': { pri: '#6F2633', sec: '#FFB81C', logo: 'cavaliers.png' },
+  'Knicks': { pri: '#F58426', sec: '#006BB6', logo: 'knicks.png' },
+  '76ers': { pri: '#006BB6', sec: '#ED174C', logo: '76ers.png' },
+  'Timberwolves': { pri: '#002B5C', sec: '#005083', logo: 'timberwolves.png' },
+  'Celtics': { pri: '#008248', sec: '#BA9653', logo: 'celtics.png' },
+  'Pistons': { pri: '#ED174C', sec: '#0067B1', logo: 'pistons.png' },
+  'Heat': { pri: '#98002E', sec: '#000000', logo: 'heat.png' },
+  'Pacers': { pri: '#002D62', sec: '#FDBB30', logo: 'pacers.png' },
+  'Nuggets': { pri: '#5091CD', sec: '#FDB927', logo: 'nuggets.png' },
+  'Magic': { pri: '#0B77BD', sec: '#C2CCD2', logo: 'magic.png' },
+  'Hornets': { pri: '#00788C', sec: '#1D1160', logo: 'hornets.png' },
+  'Raptors': { pri: '#CD1141', sec: '#A0A0A3', logo: 'raptors.png' },
+  'Hawks': { pri: '#E03A3E', sec: '#C4D600', logo: 'hawks.png' },
+  'Wizards': { pri: '#002B5C', sec: '#E31837', logo: 'wizards.png' },
+  'Suns': { pri: '#E56020', sec: '#1D1160', logo: 'suns.png' },
+  'Warriors': { pri: '#FFCD34', sec: '#243E90', logo: 'warriors.png' },
+  'Lakers': { pri: '#FDB927', sec: '#552583', logo: 'lakers.png' },
+  'Jazz': { pri: '#0C2340', sec: '#00471B', logo: 'jazz.png' },
+  'Clippers': { pri: '#ED174C', sec: '#006BB6', logo: 'clippers.png' },
+  'Kings': { pri: '#5A2D81', sec: '#63727A', logo: 'kings.png' },
+  'Pelicans': { pri: '#002B5C', sec: '#B4975A', logo: 'pelicans.png' },
+  'Spurs': { pri: '#C4CED4', sec: '#000000', logo: 'spurs.png' },
+  'Thunder': { pri: '#007AC1', sec: '#F05133', logo: 'thunder.png' },
+  'Grizzlies': { pri: '#6189B9', sec: '#00285E', logo: 'grizzlies.png' },
+  'Rockets': { pri: '#CE1141', sec: '#000000', logo: 'rockets.png' },
+  'Nets': { pri: '#000000', sec: '#FFFFFF', logo: 'nets.png' },
+  'Bulls': { pri: '#CE1141', sec: '#000000', logo: 'bulls.png' },
+  'Mavericks': { pri: '#007DC5', sec: '#C4CED4', logo: 'mavericks.png' },
+  'Trail Blazers': { pri: '#E13A3E', sec: '#C4CED4', logo: 'trail_blazers.png' },
+  'Bobcats': { pri: '#00295b', sec: '#5097d2', logo: 'bobcats.png' }
 };
 
 var DIVISION = {
@@ -1192,7 +1196,20 @@ var DIVISION = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var updateTeamContainer = exports.updateTeamContainer = function updateTeamContainer() {};
+exports.updateTeamContainer = undefined;
+
+var _store = __webpack_require__(35);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var updateTeamContainer = exports.updateTeamContainer = function updateTeamContainer() {
+  var teamContainer = document.getElementById('team-sidebar');
+
+  console.log(_store2.default.activeTeam);
+  teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.teamName : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + _store2.default.activeTeam.wins + '</li>\n      <li>Losses: ' + _store2.default.activeTeam.losses + '</li>\n    </ul>';
+};
 
 /***/ }),
 
