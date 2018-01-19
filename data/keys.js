@@ -31,7 +31,7 @@ const TEAMS = [
  1610612759];
 
 export const COLORS = {
-  'Bucks': {pri: '#E03A3E', sec: '#C4D600'},
+  'Bucks': {pri: '#E03A3E', sec: '#C4D600', logo: 'https://teamcolorcodes.com/wp-content/uploads/2015/02/atlanta_hawks_logo.jpg'},
   'Cavaliers': {pri: '#6F2633', sec: '#FFB81C'},
   'Knicks': {pri: '#F58426', sec: '#006BB6'},
   '76ers': {pri: '#006BB6', sec: '#ED174C'},

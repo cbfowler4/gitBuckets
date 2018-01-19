@@ -1,6 +1,21 @@
+export const boundaries = (node, width, height) => {
+  if (node.x - node.radius < 0) {
+    node.x = node.radius;
+  } else if (node.x + node.radius > width){
+    node.x = width - node.radius;
+
+  }
+
+  if (node.y - node.radius < 0) {
+    node.y = node.radius;
+  } else if (node.y + node.radius > height) {
+    node.y = height - node.radius;
+  }
+};
+
 
 export const collide = (node) => {
-  var r = node.radius+16,
+  var r = node.radius+200,
       nx1 = node.x - r,
       nx2 = node.x + r,
       ny1 = node.y - r,

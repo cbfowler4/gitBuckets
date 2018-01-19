@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //   data: {seasonYear: 2001}
   // });
 
-  const width = 800;
+  const width = 700;
   const height = 600;
 
   const nodes = new Nodes;

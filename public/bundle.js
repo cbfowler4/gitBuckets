@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //   data: {seasonYear: 2001}
   // });
 
-  const width = 800;
+  const width = 700;
   const height = 600;
 
   const nodes = new __WEBPACK_IMPORTED_MODULE_1__nodes_nodes__["a" /* default */];
@@ -575,7 +575,7 @@ class Nodes {
   createNodes(seasonData, width, height) {
     const nodes = seasonData[2014].map((team) => {
       return {
-        radius: team[0].w*.5,
+        radius: team[0].w*.7,
         color: __WEBPACK_IMPORTED_MODULE_1__data_keys__["a" /* COLORS */][team[0].teamName].pri,
         stroke: __WEBPACK_IMPORTED_MODULE_1__data_keys__["a" /* COLORS */][team[0].teamName].sec
       };
@@ -584,7 +584,7 @@ class Nodes {
     var force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
-          return i ? -(d.radius*d.radius-100) : 0; })
+          return i ? -d.radius*9 : 0; })
         .nodes(nodes)
         .size([width, height]);
 
@@ -605,9 +605,11 @@ class Nodes {
     force.on("tick", function(e) {
       var q = d3.geom.quadtree(nodes),
           i = 0,
+          j = 0,
           n = nodes.length;
 
-      while (++i < n) q.visit(Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["a" /* collide */])(nodes[i]));
+      while (++i < n) q.visit(Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["b" /* collide */])(nodes[i]));
+      while (++j < n) Object(__WEBPACK_IMPORTED_MODULE_0__util_movements__["a" /* boundaries */])(nodes[j], width, height);
 
       svg.selectAll("circle")
           .attr("cx", function(d) { return d.x; })
@@ -626,9 +628,26 @@ class Nodes {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+const boundaries = (node, width, height) => {
+  if (node.x - node.radius < 0) {
+    node.x = node.radius;
+  } else if (node.x + node.radius > width){
+    node.x = width - node.radius;
+
+  }
+
+  if (node.y - node.radius < 0) {
+    node.y = node.radius;
+  } else if (node.y + node.radius > height) {
+    node.y = height - node.radius;
+  }
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = boundaries;
+
+
 
 const collide = (node) => {
-  var r = node.radius+16,
+  var r = node.radius+200,
       nx1 = node.x - r,
       nx2 = node.x + r,
       ny1 = node.y - r,
@@ -650,7 +669,7 @@ const collide = (node) => {
     return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
   };
 };
-/* harmony export (immutable) */ __webpack_exports__["a"] = collide;
+/* harmony export (immutable) */ __webpack_exports__["b"] = collide;
 
 
 
@@ -693,7 +712,7 @@ const TEAMS = [
  1610612759];
 
 const COLORS = {
-  'Bucks': {pri: '#E03A3E', sec: '#C4D600'},
+  'Bucks': {pri: '#E03A3E', sec: '#C4D600', logo: 'https://teamcolorcodes.com/wp-content/uploads/2015/02/atlanta_hawks_logo.jpg'},
   'Cavaliers': {pri: '#6F2633', sec: '#FFB81C'},
   'Knicks': {pri: '#F58426', sec: '#006BB6'},
   '76ers': {pri: '#006BB6', sec: '#ED174C'},
