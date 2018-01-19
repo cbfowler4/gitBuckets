@@ -11,7 +11,7 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname + '/index.html')));
 
 app.get('/data', (req, res) => {
   teams.forEach((teamId) => {
-    nba.stats.teamInfoCommon({LeagueID: "00", Season: parseInt(req.query.seasonYear), SeasonType: "Regular Season", TeamID: teamId})
+    nba.stats.teamInfoCommon({LeagueID: "00", Season: 2014, SeasonType: "Regular Season", TeamID: teamId})
     .then((res, err) => console.log(res.teamInfoCommon));
     });
   });

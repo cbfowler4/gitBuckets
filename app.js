@@ -1,20 +1,20 @@
-import * as d3 from 'd3';
+import seasonData from './data/data';
+import Nodes from './nodes/nodes';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  $.ajax({
-    url: '/data',
-    method: 'get',
-    data: {seasonYear: 2001}
-  });
+  // $.ajax({
+  //   url: '/data',
+  //   method: 'get',
+  //   data: {seasonYear: 2001}
+  // });
 
-  const width = 500;
-  const height = 500;
+  const width = 800;
+  const height = 800;
 
-  const svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  const nodes = new Nodes;
 
-  const circles = svg.append('circle').attr('cx', 50).attr('cy', 50).attr('r', 10).attr('fill','red');
+  nodes.createNodes(seasonData, width, height);
+
 
 });
