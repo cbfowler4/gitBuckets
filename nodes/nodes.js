@@ -1,5 +1,7 @@
 import { collide, boundaries } from '../util/movements';
+import Store from '../store/store';
 import { COLORS } from '../data/keys';
+import { updateTeamContainer } from '../actions/team_container_actions';
 
 
 class Nodes {
@@ -12,12 +14,14 @@ class Nodes {
     this.force = this.createForce();
 
     this.handleTick = this.handleTick.bind(this);
+    this.handleMouseover = this.handleMouseover.bind(this);
+    this.handleMouseout = this.handleMouseout.bind(this);
 
     this.force.on("tick", this.handleTick);
   }
 
   createNodes() {
-    let nodes = this.seasonData[2014].map((team) => {
+    let nodes = this.seasonData[2013].map((team) => {
       return {
         radius: team[0].w*.7,
         color: COLORS[team[0].teamName] ? COLORS[team[0].teamName].pri : 'white',
@@ -27,14 +31,17 @@ class Nodes {
     });
 
     this.svg.selectAll("circle")
-        .data(nodes)
+      .data(nodes)
       .enter().append("circle")
-        .attr("r", function(d) { return d.radius; })
-        .attr('id', function(d) { return d.teamName; })
-        .style("fill", function(d) { return d.color; })
-        .style('stroke', function(d) {return d.stroke;})
-        .style('stroke-width', 2);
+      .attr("r", function(d) { return d.radius; })
+      .attr('id', function(d) { return d.teamName; })
+      .style("fill", function(d) { return d.color; })
+      .style('stroke', function(d) {return d.stroke;})
+      .style('stroke-width', 2);
 
+    this.svg.selectAll("circle")
+      .on('mouseover', this.handleMouseover)
+      .on('mouseout', this.handleMouseout);
     return nodes;
   }
 
@@ -66,6 +73,17 @@ class Nodes {
 
     this.force.resume(.1);
   }
+
+  handleMouseover(d) {
+    Store.activeTeam = d.teamName;
+    updateTeamContainer();
+  }
+
+  handleMouseout(d) {
+    Store.activeTeam = null;
+    updateTeamContainer();
+  }
+
 }
 
 export default Nodes;

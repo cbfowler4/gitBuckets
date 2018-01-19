@@ -1,8 +1,5 @@
 import seasonData from './data/data';
 import Nodes from './nodes/nodes';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import TeamContainer from './components/team_container';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -22,5 +19,4 @@ document.addEventListener('DOMContentLoaded', () => {
   const nodes = new Nodes(svg, seasonData, width, height);
 
   const teamContainer = document.getElementById("team-sidebar");
-  ReactDOM.render(<TeamContainer />, teamContainer);
 });
