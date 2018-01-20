@@ -60,30 +60,76 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 14:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _data = __webpack_require__(15);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var store = {
+  activeTeam: null,
+  selectedYear: 2013,
+  nodes: null,
+  seasonData: null
+};
+
+exports.default = store;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateNodeValues = exports.updateTeamContainer = undefined;
+
+var _store = __webpack_require__(0);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var updateTeamContainer = exports.updateTeamContainer = function updateTeamContainer() {
+  var teamContainer = document.getElementById('team-sidebar');
+
+  teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.teamName : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + _store2.default.activeTeam.wins + '</li>\n      <li>Losses: ' + _store2.default.activeTeam.losses + '</li>\n    </ul>';
+};
+
+var updateNodeValues = exports.updateNodeValues = function updateNodeValues() {
+  _store2.default.nodes.updateNodeValues();
+};
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _data = __webpack_require__(3);
 
 var _data2 = _interopRequireDefault(_data);
 
-var _nodes = __webpack_require__(36);
+var _nodes = __webpack_require__(4);
 
 var _nodes2 = _interopRequireDefault(_nodes);
 
-var _slider = __webpack_require__(37);
+var _slider = __webpack_require__(7);
 
 var _slider2 = _interopRequireDefault(_slider);
 
-var _store = __webpack_require__(35);
+var _store = __webpack_require__(0);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -91,10 +137,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  $.ajax({
+    url: '/team',
+    method: 'get'
+  });
+
+  // const url = `https://stats.nba.com/stats/teamgamelogs?DateFrom=&DateTo=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=1610612737&Outcome=&PORound=0&PaceAdjust=N&PerMode=Totals&Period=0&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&VsConference=&VsDivision=`
+  // console.log(url);
+  //
   // $.ajax({
-  //   url: '/data',
-  //   method: 'get',
-  //   data: {seasonYear: 2013}
+  //   url: url,
+  //   method: 'get'
   // });
 
   var width = 700;
@@ -111,8 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /***/ }),
-
-/***/ 15:
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -135,7 +187,9 @@ var seasonData2 = {
             l: 50
         } }
 };
-
+//use d3 queue to get all data for one year, for each element in result put into array.
+//create a node for each team, if certain team does not exist for given year then put in an array with
+//a radius of zero
 var seasonData = { 2013: [[{ teamId: 1610612765,
         seasonYear: '2013-14',
         teamCity: 'Detroit',
@@ -983,8 +1037,162 @@ var seasonData = { 2013: [[{ teamId: 1610612765,
 exports.default = seasonData;
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 17:
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _movements = __webpack_require__(5);
+
+var _store = __webpack_require__(0);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _keys = __webpack_require__(6);
+
+var _store_update_actions = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Nodes = function () {
+  function Nodes(svg, width, height) {
+    _classCallCheck(this, Nodes);
+
+    this.svg = svg;
+    this.width = width;
+    this.height = height;
+    this.nodeValues = this.createNodes();
+
+    this.handleTick = this.handleTick.bind(this);
+    this.handleMouseover = this.handleMouseover.bind(this);
+    this.handleMouseout = this.handleMouseout.bind(this);
+
+    this.force.on("tick", this.handleTick);
+  }
+
+  _createClass(Nodes, [{
+    key: 'createNodes',
+    value: function createNodes() {
+      var nodeValues = this.getNodeValuesFromStore();
+      var selectedNodes = this.selectAllNodes();
+
+      selectedNodes.data(nodeValues).enter().append("circle").attr("r", function (d) {
+        return d.radius;
+      }).attr('id', function (d) {
+        return d.teamName;
+      }).style("fill", function (d) {
+        return d.color;
+      }).style('stroke', function (d) {
+        return d.stroke;
+      }).style('stroke-width', 3);
+
+      this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
+      // .on('mouseout', this.handleMouseout);
+
+      this.force = this.createForce(nodeValues);
+      return nodeValues;
+    }
+  }, {
+    key: 'createForce',
+    value: function createForce(nodeValues) {
+      var force = d3.layout.force().gravity(.1).charge(function (d, i) {
+        return i ? -d.radius * 9 : 0;
+      }).nodes(nodeValues).size([this.width, this.height]);
+      force.start();
+      return force;
+    }
+  }, {
+    key: 'handleTick',
+    value: function handleTick(e) {
+      var q = d3.geom.quadtree(this.nodeValues),
+          i = 0,
+          j = 0,
+          n = this.nodeValues.length;
+
+      while (++i < n) {
+        q.visit((0, _movements.collide)(this.nodeValues[i]));
+      }while (++j < n) {
+        (0, _movements.boundaries)(this.nodeValues[j], this.width, this.height);
+      }this.svg.selectAll("circle").attr("cx", function (d) {
+        return d.x;
+      }).attr("cy", function (d) {
+        return d.y;
+      });
+
+      this.force.resume(.1);
+    }
+  }, {
+    key: 'getNodeValuesFromStore',
+    value: function getNodeValuesFromStore() {
+      var nodes = _store2.default.seasonData[_store2.default.selectedYear].map(function (team) {
+        return {
+          radius: team[0].w * .7,
+          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
+          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
+          teamName: team[0].teamName,
+          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
+          wins: team[0].w,
+          losses: team[0].l
+        };
+      });
+      return nodes;
+    }
+  }, {
+    key: 'selectAllNodes',
+    value: function selectAllNodes() {
+      return this.svg.selectAll("circle");
+    }
+  }, {
+    key: 'updateNodeValues',
+    value: function updateNodeValues() {
+      var nodes = this.selectAllNodes().remove();
+
+      this.nodeValues = this.createNodes();
+
+      // nodes
+      //   .attr("r", function(d) {
+      //     return d.radius; });
+
+      // debugger
+
+      //
+      // nodes.enter().append('circle')
+      //   .attr('id', function(d) { return d.teamName; })
+      //   .attr("r", function(d) { return d.radius; })
+      //   .style("fill", function(d) { return d.color; })
+      //   .style('stroke', function(d) {return d.stroke;})
+      //   .style('stroke-width', 2);
+    }
+  }, {
+    key: 'handleMouseover',
+    value: function handleMouseover(d) {
+      _store2.default.activeTeam = d;
+      (0, _store_update_actions.updateTeamContainer)();
+    }
+  }, {
+    key: 'handleMouseout',
+    value: function handleMouseout(d) {
+      _store2.default.activeTeam = null;
+      (0, _store_update_actions.updateTeamContainer)();
+    }
+  }]);
+
+  return Nodes;
+}();
+
+exports.default = Nodes;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1032,8 +1240,7 @@ var collide = exports.collide = function collide(node) {
 };
 
 /***/ }),
-
-/***/ 18:
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1088,28 +1295,7 @@ var DIVISION = {
   'West': 'West' };
 
 /***/ }),
-
-/***/ 35:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var store = {
-  activeTeam: null,
-  selectedYear: 2013,
-  nodes: null,
-  seasonData: null
-};
-
-exports.default = store;
-
-/***/ }),
-
-/***/ 36:
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1121,167 +1307,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _movements = __webpack_require__(17);
-
-var _store = __webpack_require__(35);
+var _store = __webpack_require__(0);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _keys = __webpack_require__(18);
-
-var _store_update_actions = __webpack_require__(38);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Nodes = function () {
-  function Nodes(svg, width, height) {
-    _classCallCheck(this, Nodes);
-
-    this.svg = svg;
-    this.width = width;
-    this.height = height;
-    this.nodeValues = this.createNodes();
-    this.force = this.createForce();
-
-    this.handleTick = this.handleTick.bind(this);
-    this.handleMouseover = this.handleMouseover.bind(this);
-    this.handleMouseout = this.handleMouseout.bind(this);
-
-    this.force.on("tick", this.handleTick);
-  }
-
-  _createClass(Nodes, [{
-    key: 'createNodes',
-    value: function createNodes() {
-      var nodeValues = this.getNodeValuesFromStore();
-      var selectedNodes = this.selectAllNodes();
-
-      selectedNodes.data(nodeValues).enter().append("circle").attr("r", function (d) {
-        return d.radius;
-      }).attr('id', function (d) {
-        return d.teamName;
-      }).style("fill", function (d) {
-        return d.color;
-      }).style('stroke', function (d) {
-        return d.stroke;
-      }).style('stroke-width', 2);
-
-      this.svg.selectAll("circle").on('mouseover', this.handleMouseover);
-      // .on('mouseout', this.handleMouseout);
-
-      return nodeValues;
-    }
-  }, {
-    key: 'createForce',
-    value: function createForce() {
-      var force = d3.layout.force().gravity(.1).charge(function (d, i) {
-        return i ? -d.radius * 9 : 0;
-      }).nodes(this.nodeValues).size([this.width, this.height]);
-      force.start();
-      return force;
-    }
-  }, {
-    key: 'handleTick',
-    value: function handleTick(e) {
-      var q = d3.geom.quadtree(this.nodeValues),
-          i = 0,
-          j = 0,
-          n = this.nodeValues.length;
-
-      while (++i < n) {
-        q.visit((0, _movements.collide)(this.nodeValues[i]));
-      }while (++j < n) {
-        (0, _movements.boundaries)(this.nodeValues[j], this.width, this.height);
-      }this.svg.selectAll("circle").attr("cx", function (d) {
-        return d.x;
-      }).attr("cy", function (d) {
-        return d.y;
-      });
-
-      this.force.resume(.1);
-    }
-  }, {
-    key: 'getNodeValuesFromStore',
-    value: function getNodeValuesFromStore() {
-      var nodes = _store2.default.seasonData[_store2.default.selectedYear].map(function (team) {
-        return {
-          radius: team[0].w * .7,
-          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
-          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
-          teamName: team[0].teamName,
-          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
-          wins: team[0].w,
-          losses: team[0].l
-        };
-      });
-      return nodes;
-    }
-  }, {
-    key: 'selectAllNodes',
-    value: function selectAllNodes() {
-      return this.svg.selectAll("circle");
-    }
-  }, {
-    key: 'updateNodeValues',
-    value: function updateNodeValues() {
-      var nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
-
-      nodes.exit().remove();
-
-      nodes.attr("r", function (d) {
-        return d.radius;
-      });
-
-      debugger;
-
-      //
-      // nodes.enter().append('circle')
-      //   .attr('id', function(d) { return d.teamName; })
-      //   .attr("r", function(d) { return d.radius; })
-      //   .style("fill", function(d) { return d.color; })
-      //   .style('stroke', function(d) {return d.stroke;})
-      //   .style('stroke-width', 2);
-    }
-  }, {
-    key: 'handleMouseover',
-    value: function handleMouseover(d) {
-      _store2.default.activeTeam = d;
-      (0, _store_update_actions.updateTeamContainer)();
-    }
-  }, {
-    key: 'handleMouseout',
-    value: function handleMouseout(d) {
-      _store2.default.activeTeam = null;
-      (0, _store_update_actions.updateTeamContainer)();
-    }
-  }]);
-
-  return Nodes;
-}();
-
-exports.default = Nodes;
-
-/***/ }),
-
-/***/ 37:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _store = __webpack_require__(35);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _store_update_actions = __webpack_require__(38);
+var _store_update_actions = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1325,36 +1355,6 @@ var Slider = function () {
 
 exports.default = Slider;
 
-/***/ }),
-
-/***/ 38:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.updateNodeValues = exports.updateTeamContainer = undefined;
-
-var _store = __webpack_require__(35);
-
-var _store2 = _interopRequireDefault(_store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var updateTeamContainer = exports.updateTeamContainer = function updateTeamContainer() {
-  var teamContainer = document.getElementById('team-sidebar');
-
-  teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.teamName : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + _store2.default.activeTeam.wins + '</li>\n      <li>Losses: ' + _store2.default.activeTeam.losses + '</li>\n    </ul>';
-};
-
-var updateNodeValues = exports.updateNodeValues = function updateNodeValues() {
-  _store2.default.nodes.updateNodeValues();
-};
-
 /***/ })
-
-/******/ });
+/******/ ]);
 //# sourceMappingURL=bundle.js.map

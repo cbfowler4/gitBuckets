@@ -5,10 +5,17 @@ import Store from './store/store';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  $.ajax({
+    url: '/team',
+    method: 'get'
+  });
+
+  // const url = `https://stats.nba.com/stats/teamgamelogs?DateFrom=&DateTo=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=1610612737&Outcome=&PORound=0&PaceAdjust=N&PerMode=Totals&Period=0&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&VsConference=&VsDivision=`
+  // console.log(url);
+  //
   // $.ajax({
-  //   url: '/data',
-  //   method: 'get',
-  //   data: {seasonYear: 2013}
+  //   url: url,
+  //   method: 'get'
   // });
 
   const width = 700;

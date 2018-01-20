@@ -11,8 +11,10 @@ const seasonData2 = {
       w: 35,
       l: 50
     }}
-  };  
-
+  };
+//use d3 queue to get all data for one year, for each element in result put into array.
+//create a node for each team, if certain team does not exist for given year then put in an array with
+//a radius of zero
 const seasonData = { 2013: [
   [ { teamId: 1610612765,
     seasonYear: '2013-14',

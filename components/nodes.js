@@ -10,7 +10,6 @@ class Nodes {
     this.width = width;
     this.height = height;
     this.nodeValues = this.createNodes();
-    this.force = this.createForce();
 
     this.handleTick = this.handleTick.bind(this);
     this.handleMouseover = this.handleMouseover.bind(this);
@@ -30,22 +29,23 @@ class Nodes {
       .attr('id', function(d) { return d.teamName; })
       .style("fill", function(d) { return d.color; })
       .style('stroke', function(d) {return d.stroke;})
-      .style('stroke-width', 2);
+      .style('stroke-width', 3);
 
     this.svg.selectAll("circle")
       .on('mouseover', this.handleMouseover);
       // .on('mouseout', this.handleMouseout);
 
+    this.force = this.createForce(nodeValues);
     return nodeValues;
   }
 
 
-  createForce() {
+  createForce(nodeValues) {
     const force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
           return i ? -d.radius*9 : 0; })
-        .nodes(this.nodeValues)
+        .nodes(nodeValues)
         .size([this.width, this.height]);
     force.start();
     return force;
@@ -87,16 +87,16 @@ class Nodes {
   }
 
   updateNodeValues() {
-    const nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
+    const nodes = this.selectAllNodes().remove();
 
-    nodes.exit().remove();
+    this.nodeValues = this.createNodes();
 
 
-    nodes
-      .attr("r", function(d) {
-        return d.radius; });
+    // nodes
+    //   .attr("r", function(d) {
+    //     return d.radius; });
 
-    debugger
+    // debugger
 
     //
     // nodes.enter().append('circle')

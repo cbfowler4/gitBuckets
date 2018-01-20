@@ -1,12 +1,37 @@
+* {
+  font-family: 'Maven Pro', sans-serif;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+
+html {
+  /* background-color: ; */
+  background-image: linear-gradient(
+    to top,
+    rgba(108, 100, 139, .15),
+    rgba(0,0,0,0) 7%
+    );
+  height: 100%;
+  width: 100%;
+}
 
 body {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  margin-left: 50px;
 }
 
 svg {
-  border: 1px solid rgba(0,0,0,.1);
+  /* border: 1px solid rgba(0,0,0,.1); */
+}
+
+#page-header {
+  font-size: 40px;
+  padding: 20px 0;
 }
 
 #svg-team-container {
@@ -19,14 +44,25 @@ svg {
   margin-left: 50px;
   height: 600px;
   width: 300px;
-  border: 1px solid rgba(0,0,0,.1);
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* border: 1px solid rgba(0,0,0,.1); */
 }
 
 #team-sidebar img {
   height: 100px;
   width: 100px;
   object-fit: contain;
+  margin: 20px 0;
+}
+
+#team-sidebar h1 {
+  font-size: 35px;
+}
+
+#team-sidebar li {
+  font-size: 25px;
 }
 
 circle:hover {
