@@ -1197,7 +1197,12 @@ var Nodes = function () {
     }
   }, {
     key: 'handleClick',
-    value: function handleClick() {}
+    value: function handleClick() {
+      $.ajax({
+        url: '/team/' + 'hey',
+        method: 'get'
+      });
+    }
   }, {
     key: 'handleTick',
     value: function handleTick(e) {

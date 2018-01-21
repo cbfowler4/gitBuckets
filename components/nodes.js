@@ -91,7 +91,10 @@ class Nodes {
   }
 
   handleClick() {
-
+    $.ajax({
+      url: `/team/${'hey'}`,
+      method: 'get'
+    });
   }
 
   handleTick(e) {
