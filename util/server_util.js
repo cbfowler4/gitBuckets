@@ -5,6 +5,8 @@ const parseTeamName = (team) => {
 
   if (teamName == 'Blazers') {
     teamName = "Trail Blazers";
+  } else if (teamName == 'Hornets' && teamNameArray[0] === 'New') {
+    teamName = 'NO_Hornets';
   }
   return teamName;
 };

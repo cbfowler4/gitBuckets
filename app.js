@@ -6,7 +6,7 @@ import Store from './store/store';
 import data from './data/team_data.json';
 
 document.addEventListener('DOMContentLoaded', () => {
-  //
+
   // $.ajax({
   //   url: '/team',
   //   method: 'get'

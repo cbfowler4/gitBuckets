@@ -12,6 +12,7 @@ export const STYLING = {
   'Nuggets': {pri: '#5091CD', sec: '#FDB927', logo: 'nuggets.png'},
   'Magic': {pri: '#0B77BD', sec: '#C2CCD2', logo: 'magic.png'},
   'Hornets': {pri: '#00788C', sec: '#1D1160', logo: 'hornets.png'},
+  'NO_Hornets': {pri: '#1385b8', sec: '#37275d', logo: 'no_hornets.png'},
   'Raptors': {pri: '#CD1141', sec: '#A0A0A3', logo: 'raptors.png'},
   'Hawks': {pri: '#E03A3E', sec: '#C4D600', logo: 'hawks.png'},
   'Wizards': {pri: '#002B5C', sec: '#E31837', logo: 'wizards.png'},
