@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // });
 
 
+
+  const root = document.getElementById("root");
+  ReactDOM.render(<Root />, root);
+
+
   const width = 700;
   const height = 600;
 

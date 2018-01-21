@@ -150,6 +150,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // });
 
 
+  var root = document.getElementById("root");
+  ReactDOM.render(React.createElement(Root, null), root);
+
   var width = 700;
   var height = 600;
 
