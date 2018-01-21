@@ -1,5 +1,6 @@
 import Store from '../store/store';
 import { updateNodes } from '../actions/store_update_actions';
+import { formatSeason } from '../util/data_util';
 
 class Slider {
   constructor() {
@@ -23,7 +24,7 @@ class Slider {
 
     const yearDisplay = document.createElement('div');
     yearDisplay.setAttribute('id', 'year-display');
-    yearDisplay.innerHTML = (`Season: ${this.formatSeason(1996)}`);
+    yearDisplay.innerHTML = (`Season: ${formatSeason(1996)}`);
 
     mainContainer.appendChild(sliderContainer);
     sliderContainer.appendChild(slider);
@@ -35,15 +36,12 @@ class Slider {
     const yearDisplay = document.getElementById('year-display');
     slider.oninput=((e)=> {
       Store.selectedYear = e.target.value;
-      yearDisplay.innerHTML = (`Season: ${this.formatSeason(parseInt(e.target.value))}`);
+      yearDisplay.innerHTML = (`Season: ${formatSeason(parseInt(e.target.value))}`);
       updateNodes();
     });
   }
 
-  formatSeason(startYear) {
-    const endYear = startYear+1;
-    return `${startYear}-${String(endYear).slice(2)}`;
-  }
+
 }
 
 export default Slider;

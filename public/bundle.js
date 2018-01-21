@@ -150,9 +150,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // });
 
 
-  var root = document.getElementById("root");
-  ReactDOM.render(React.createElement(Root, null), root);
-
   var width = 700;
   var height = 600;
 
@@ -1323,6 +1320,8 @@ var _store2 = _interopRequireDefault(_store);
 
 var _store_update_actions = __webpack_require__(1);
 
+var _data_util = __webpack_require__(9);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1353,7 +1352,7 @@ var Slider = function () {
 
       var yearDisplay = document.createElement('div');
       yearDisplay.setAttribute('id', 'year-display');
-      yearDisplay.innerHTML = 'Season: ' + this.formatSeason(1996);
+      yearDisplay.innerHTML = 'Season: ' + (0, _data_util.formatSeason)(1996);
 
       mainContainer.appendChild(sliderContainer);
       sliderContainer.appendChild(slider);
@@ -1362,21 +1361,13 @@ var Slider = function () {
   }, {
     key: 'handleChange',
     value: function handleChange() {
-      var _this = this;
-
       var slider = document.getElementById('year-slider');
       var yearDisplay = document.getElementById('year-display');
       slider.oninput = function (e) {
         _store2.default.selectedYear = e.target.value;
-        yearDisplay.innerHTML = 'Season: ' + _this.formatSeason(parseInt(e.target.value));
+        yearDisplay.innerHTML = 'Season: ' + (0, _data_util.formatSeason)(parseInt(e.target.value));
         (0, _store_update_actions.updateNodes)();
       };
-    }
-  }, {
-    key: 'formatSeason',
-    value: function formatSeason(startYear) {
-      var endYear = startYear + 1;
-      return startYear + '-' + String(endYear).slice(2);
     }
   }]);
 
@@ -1412,16 +1403,6 @@ var parseSeasonData = exports.parseSeasonData = function parseSeasonData(seasonD
   });
 
   return parsedObj;
-};
-
-var parseTeamName = exports.parseTeamName = function parseTeamName(team) {
-  var teamNameArray = team.split(" ");
-  var teamName = teamNameArray[teamNameArray.length - 1];
-
-  if (teamName == 'Blazers') {
-    teamName = "Trail Blazers";
-  }
-  return teamName;
 };
 
 var formatSeason = exports.formatSeason = function formatSeason(startYear) {

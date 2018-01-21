@@ -3,7 +3,7 @@ const path = require('path');
 const nba = require('nba');
 const request = require('request');
 const fs = require('fs');
-const dataUtil = require('./util/data_util');
+const serverUtil = require('./util/server_util');
 
 
 const TEAMS = {
@@ -97,7 +97,7 @@ const getTeamInfo = (startYear, endYear) => {
       fs.writeFile('./data/team_data.json', JSON.stringify(finalObj, null, 3));
       return;
     }
-    let season = dataUtil.formatSeason(year);
+    let season = serverUtil.formatSeason(year);
     console.log(season);
     const url = `https://stats.nba.com/stats/leaguedashteamstats?Conference=&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season=${season}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision=`;
     request({
@@ -129,7 +129,7 @@ const parseTeamResponse = (body) => {
 
   body.resultSets[0].rowSet.forEach((team) => {
     parsedResponse[team[0]] = {
-      teamName: dataUtil.parseTeamName(team[1]),
+      teamName: serverUtil.parseTeamName(team[1]),
       w: team[3],
       l: team[4]
     };
