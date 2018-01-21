@@ -1,6 +1,6 @@
 
 export const STYLING = {
-  'Bucks': {pri: '#E03A3E', sec: '#C4D600', logo: 'bucks.png'},
+  'Bucks': {pri: '#00471B', sec: '#EEE1C6', logo: 'bucks.png'},
   'Cavaliers': {pri: '#6F2633', sec: '#FFB81C', logo: 'cavaliers.png'},
   'Knicks': {pri: '#F58426', sec: '#006BB6', logo: 'knicks.png'},
   '76ers': {pri: '#006BB6', sec: '#ED174C', logo: '76ers.png'},
@@ -30,7 +30,9 @@ export const STYLING = {
   'Bulls': {pri: '#CE1141', sec: '#000000', logo: 'bulls.png'},
   'Mavericks': {pri: '#007DC5', sec: '#C4CED4', logo: 'mavericks.png'},
   'Trail Blazers': {pri: '#E13A3E', sec: '#C4CED4', logo: 'trail_blazers.png'},
-  'Bobcats': {pri: '#00295b', sec: '#5097d2', logo: 'bobcats.png'}
+  'Bobcats': {pri: '#00295b', sec: '#5097d2', logo: 'bobcats.png'},
+  'SuperSonics': {pri: '#00653A', sec: '#fec408', logo: 'supersonics.png'},
+  'Bullets': {pri: '#002B5C', sec: '#E31837', logo: 'bullets.png'}
 };
 
 const DIVISION = {

@@ -3,6 +3,7 @@ const path = require('path');
 const nba = require('nba');
 const request = require('request');
 const fs = require('fs');
+const dataUtil = require('./util/data_util');
 
 
 const TEAMS = {
@@ -87,10 +88,6 @@ app.listen(3000, () => console.log('Example app listening on port 3000!'));
 
 
 
-const formatSeason = (startYear) => {
-  const endYear = startYear+1;
-  return `${startYear}-${String(endYear).slice(2)}`;
-};
 
 const getTeamInfo = (startYear, endYear) => {
   const finalObj = {};
@@ -100,7 +97,7 @@ const getTeamInfo = (startYear, endYear) => {
       fs.writeFile('./data/team_data.json', JSON.stringify(finalObj, null, 3));
       return;
     }
-    let season = formatSeason(year);
+    let season = dataUtil.formatSeason(year);
     console.log(season);
     const url = `https://stats.nba.com/stats/leaguedashteamstats?Conference=&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season=${season}&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision=`;
     request({
@@ -132,21 +129,10 @@ const parseTeamResponse = (body) => {
 
   body.resultSets[0].rowSet.forEach((team) => {
     parsedResponse[team[0]] = {
-      teamName: parseTeamName(team[1]),
+      teamName: dataUtil.parseTeamName(team[1]),
       w: team[3],
       l: team[4]
     };
   });
   return parsedResponse;
-};
-
-
-const parseTeamName = (team) => {
-  let teamNameArray = team.split(" ");
-  let teamName = teamNameArray[teamNameArray.length-1];
-
-  if (teamName == 'Blazers') {
-    teamName = "Trail Blazers";
-  }
-  return teamName;
 };

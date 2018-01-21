@@ -1265,7 +1265,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var STYLING = exports.STYLING = {
-  'Bucks': { pri: '#E03A3E', sec: '#C4D600', logo: 'bucks.png' },
+  'Bucks': { pri: '#00471B', sec: '#EEE1C6', logo: 'bucks.png' },
   'Cavaliers': { pri: '#6F2633', sec: '#FFB81C', logo: 'cavaliers.png' },
   'Knicks': { pri: '#F58426', sec: '#006BB6', logo: 'knicks.png' },
   '76ers': { pri: '#006BB6', sec: '#ED174C', logo: '76ers.png' },
@@ -1295,7 +1295,9 @@ var STYLING = exports.STYLING = {
   'Bulls': { pri: '#CE1141', sec: '#000000', logo: 'bulls.png' },
   'Mavericks': { pri: '#007DC5', sec: '#C4CED4', logo: 'mavericks.png' },
   'Trail Blazers': { pri: '#E13A3E', sec: '#C4CED4', logo: 'trail_blazers.png' },
-  'Bobcats': { pri: '#00295b', sec: '#5097d2', logo: 'bobcats.png' }
+  'Bobcats': { pri: '#00295b', sec: '#5097d2', logo: 'bobcats.png' },
+  'SuperSonics': { pri: '#00653A', sec: '#fec408', logo: 'supersonics.png' },
+  'Bullets': { pri: '#002B5C', sec: '#E31837', logo: 'bullets.png' }
 };
 
 var DIVISION = {
@@ -1336,6 +1338,7 @@ var Slider = function () {
   function Slider() {
     _classCallCheck(this, Slider);
 
+    this.handleChange = this.handleChange.bind(this);
     this.createSlider();
     this.handleChange();
   }
@@ -1344,6 +1347,10 @@ var Slider = function () {
     key: 'createSlider',
     value: function createSlider() {
       var mainContainer = document.getElementById('main-container');
+
+      var sliderContainer = document.createElement('div');
+      sliderContainer.setAttribute('id', 'slider-container');
+
       var slider = document.createElement('input');
       slider.setAttribute('type', 'range');
       slider.setAttribute('min', '1996');
@@ -1351,17 +1358,32 @@ var Slider = function () {
       slider.setAttribute('step', '1');
       slider.setAttribute('id', 'year-slider');
 
-      mainContainer.appendChild(slider);
-      // '<input id="year-slider" type="range" min="2013" max="2014" step="1"/>'
+      var yearDisplay = document.createElement('div');
+      yearDisplay.setAttribute('id', 'year-display');
+      yearDisplay.innerHTML = 'Season: ' + this.formatSeason(1996);
+
+      mainContainer.appendChild(sliderContainer);
+      sliderContainer.appendChild(slider);
+      sliderContainer.appendChild(yearDisplay);
     }
   }, {
     key: 'handleChange',
     value: function handleChange() {
+      var _this = this;
+
       var slider = document.getElementById('year-slider');
+      var yearDisplay = document.getElementById('year-display');
       slider.oninput = function (e) {
         _store2.default.selectedYear = e.target.value;
+        yearDisplay.innerHTML = 'Season: ' + _this.formatSeason(parseInt(e.target.value));
         (0, _store_update_actions.updateNodes)();
       };
+    }
+  }, {
+    key: 'formatSeason',
+    value: function formatSeason(startYear) {
+      var endYear = startYear + 1;
+      return startYear + '-' + String(endYear).slice(2);
     }
   }]);
 
@@ -1397,6 +1419,21 @@ var parseSeasonData = exports.parseSeasonData = function parseSeasonData(seasonD
   });
 
   return parsedObj;
+};
+
+var parseTeamName = exports.parseTeamName = function parseTeamName(team) {
+  var teamNameArray = team.split(" ");
+  var teamName = teamNameArray[teamNameArray.length - 1];
+
+  if (teamName == 'Blazers') {
+    teamName = "Trail Blazers";
+  }
+  return teamName;
+};
+
+var formatSeason = exports.formatSeason = function formatSeason(startYear) {
+  var endYear = startYear + 1;
+  return startYear + "-" + String(endYear).slice(2);
 };
 
 /***/ }),
