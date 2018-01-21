@@ -70,13 +70,13 @@ class Nodes {
   getNodeValuesFromStore() {
     let nodes = Store.seasonData[String(Store.selectedYear)].map((team) => {
       return {
-        radius: team[0].w*.7,
-        color: STYLING[team[0].teamName] ? STYLING[team[0].teamName].pri : 'white',
-        stroke: STYLING[team[0].teamName] ? STYLING[team[0].teamName].sec : 'black',
-        teamName: team[0].teamName,
-        logo: STYLING[team[0].teamName] ? STYLING[team[0].teamName].logo : null,
-        wins: team[0].w,
-        losses: team[0].l
+        radius: team.w*.7,
+        color: STYLING[team.teamName] ? STYLING[team.teamName].pri : 'white',
+        stroke: STYLING[team.teamName] ? STYLING[team.teamName].sec : 'black',
+        teamName: team.teamName,
+        logo: STYLING[team.teamName] ? STYLING[team.teamName].logo : null,
+        wins: team.w,
+        losses: team.l
       };
     });
     return nodes;

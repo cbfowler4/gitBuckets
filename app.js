@@ -20,12 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   .attr("width", width)
   .attr("height", height);
 
-  // console.log(parseSeasonData);
-  // console.log(data);
-  // debugger
-  // Store.seasonData = seasonData;
   Store.seasonData = parseSeasonData(data);
-  console.log(Store.seasonData);
   Store.nodes = new Nodes(svg, width, height);
 
   const slider = new Slider();

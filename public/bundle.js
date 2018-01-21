@@ -154,12 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var svg = d3.select("#svg-team-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
 
-  // console.log(parseSeasonData);
-  // console.log(data);
-  // debugger
-  // Store.seasonData = seasonData;
   _store2.default.seasonData = (0, _data_util.parseSeasonData)(_team_data2.default);
-  console.log(_store2.default.seasonData);
   _store2.default.nodes = new _nodes2.default(svg, width, height);
 
   var slider = new _slider2.default();
@@ -1139,13 +1134,13 @@ var Nodes = function () {
     value: function getNodeValuesFromStore() {
       var nodes = _store2.default.seasonData[String(_store2.default.selectedYear)].map(function (team) {
         return {
-          radius: team[0].w * .7,
-          color: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].pri : 'white',
-          stroke: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].sec : 'black',
-          teamName: team[0].teamName,
-          logo: _keys.STYLING[team[0].teamName] ? _keys.STYLING[team[0].teamName].logo : null,
-          wins: team[0].w,
-          losses: team[0].l
+          radius: team.w * .7,
+          color: _keys.STYLING[team.teamName] ? _keys.STYLING[team.teamName].pri : 'white',
+          stroke: _keys.STYLING[team.teamName] ? _keys.STYLING[team.teamName].sec : 'black',
+          teamName: team.teamName,
+          logo: _keys.STYLING[team.teamName] ? _keys.STYLING[team.teamName].logo : null,
+          wins: team.w,
+          losses: team.l
         };
       });
       return nodes;
