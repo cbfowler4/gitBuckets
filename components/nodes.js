@@ -68,7 +68,7 @@ class Nodes {
   }
 
   getNodeValuesFromStore() {
-    let nodes = Store.seasonData[Store.selectedYear].map((team) => {
+    let nodes = Store.seasonData[String(Store.selectedYear)].map((team) => {
       return {
         radius: team[0].w*.7,
         color: STYLING[team[0].teamName] ? STYLING[team[0].teamName].pri : 'white',
