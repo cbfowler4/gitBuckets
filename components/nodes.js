@@ -12,7 +12,7 @@ class Nodes {
 
     this.handleTick = this.handleTick.bind(this);
     this.handleMouseover = this.handleMouseover.bind(this);
-    this.handleMouseout = this.handleMouseout.bind(this);
+    this.handleClick = this.handleClick.bind(this);
 
     this.nodeValues = this.createNodes();
     this.force.on("tick", this.handleTick);
@@ -20,9 +20,8 @@ class Nodes {
 
   createNodes() {
     const nodeValues = this.updateNodeValues();
-    const selectedNodes = this.selectAllNodes();
 
-    selectedNodes
+    this.svg.selectAll('circle')
       .data(nodeValues)
       .enter().append("circle")
       .attr("r", (d) => { return d.radius; })
@@ -35,7 +34,6 @@ class Nodes {
 
     this.svg.selectAll("circle")
       .on('mouseover', this.handleMouseover);
-      // .on('mouseout', this.handleMouseout);
 
     this.force = this.createForce(nodeValues);
     return nodeValues;
@@ -53,24 +51,6 @@ class Nodes {
     return force;
   }
 
-  handleTick(e) {
-    let q = d3.geom.quadtree(this.nodeValues),
-        i = 0,
-        j = 0,
-        n = this.nodeValues.length;
-
-    while (++i < n) q.visit(collide(this.nodeValues[i]));
-    while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
-
-
-    this.svg.selectAll("circle")
-        .attr("cx", function(d) {
-          return d.x; })
-        .attr("cy", function(d) {
-          return d.y; });
-
-    this.force.resume(.1);
-  }
 
   updateNodeValues() {
     const nodes = [];
@@ -105,20 +85,33 @@ class Nodes {
 
   }
 
-  selectAllNodes () {
-    return this.svg.selectAll("circle");
-  }
-
   handleMouseover(d) {
     Store.activeTeam = d;
     updateTeamContainer();
   }
 
-  handleMouseout(d) {
-    Store.activeTeam = null;
-    updateTeamContainer();
+  handleClick() {
+
   }
 
+  handleTick(e) {
+    let q = d3.geom.quadtree(this.nodeValues),
+    i = 0,
+    j = 0,
+    n = this.nodeValues.length;
+
+    while (++i < n) q.visit(collide(this.nodeValues[i]));
+    while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
+
+
+    this.svg.selectAll("circle")
+    .attr("cx", function(d) {
+      return d.x; })
+      .attr("cy", function(d) {
+        return d.y; });
+
+        this.force.resume(.1);
+      }
 }
 
 export default Nodes;
