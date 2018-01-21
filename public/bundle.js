@@ -77,7 +77,8 @@ var store = {
   activeTeam: null,
   selectedYear: 2013,
   nodes: null,
-  seasonData: null
+  seasonData: null,
+  done: false
 };
 
 exports.default = store;
@@ -1081,6 +1082,8 @@ var Nodes = function () {
   _createClass(Nodes, [{
     key: 'createNodes',
     value: function createNodes() {
+      var _this = this;
+
       var nodeValues = this.getNodeValuesFromStore();
       var selectedNodes = this.selectAllNodes();
 
@@ -1088,6 +1091,10 @@ var Nodes = function () {
         return d.radius;
       }).attr('id', function (d) {
         return d.teamName;
+      }).attr('cx', function (d) {
+        return Math.random() * _this.width;
+      }).attr('cy', function (d) {
+        return Math.random() * _this.height;
       }).style("fill", function (d) {
         return d.color;
       }).style('stroke', function (d) {
@@ -1121,7 +1128,13 @@ var Nodes = function () {
         q.visit((0, _movements.collide)(this.nodeValues[i]));
       }while (++j < n) {
         (0, _movements.boundaries)(this.nodeValues[j], this.width, this.height);
-      }this.svg.selectAll("circle").attr("cx", function (d) {
+      }console.log(this.nodeValues[0]);
+      if (_store2.default.done == true) {
+        debugger;
+        console.log(this);
+      }
+
+      this.svg.selectAll("circle").attr("cx", function (d) {
         return d.x;
       }).attr("cy", function (d) {
         return d.y;
@@ -1153,15 +1166,25 @@ var Nodes = function () {
   }, {
     key: 'updateNodeValues',
     value: function updateNodeValues() {
-      var nodes = this.selectAllNodes().remove();
+      // const nodes = this.selectAllNodes().remove();
 
-      this.nodeValues = this.createNodes();
+      // this.nodeValues = this.createNodes();
 
-      // nodes
-      //   .attr("r", function(d) {
-      //     return d.radius; });
+      var nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
 
-      // debugger
+      nodes.attr('r', function (d) {
+        return d.radius;
+      });
+      // .attr('cx', (d, i) => {
+      //   // return this.nodeValues[i].x;
+      //   return 100;
+      // })
+      // .attr('cy', (d, i) => {
+      //   // return this.nodeValues[i].y;
+      //   return 100;
+      // });
+
+      _store2.default.done = true;
 
       //
       // nodes.enter().append('circle')
@@ -1200,6 +1223,14 @@ exports.default = Nodes;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.collide = exports.boundaries = undefined;
+
+var _store = __webpack_require__(0);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var boundaries = exports.boundaries = function boundaries(node, width, height) {
   if (node.x - node.radius < 0) {
     node.x = node.radius;

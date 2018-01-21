@@ -1,3 +1,5 @@
+import Store from '../store/store';
+
 export const boundaries = (node, width, height) => {
   if (node.x - node.radius < 0) {
     node.x = node.radius;

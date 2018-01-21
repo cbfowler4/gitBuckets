@@ -25,10 +25,12 @@ class Nodes {
     selectedNodes
       .data(nodeValues)
       .enter().append("circle")
-      .attr("r", function(d) { return d.radius; })
-      .attr('id', function(d) { return d.teamName; })
-      .style("fill", function(d) { return d.color; })
-      .style('stroke', function(d) {return d.stroke;})
+      .attr("r", (d) => { return d.radius; })
+      .attr('id', (d) => { return d.teamName; })
+      .attr('cx', (d) => { return Math.random()*this.width;})
+      .attr('cy', (d) => { return Math.random()*this.height;})
+      .style("fill", (d) => { return d.color; })
+      .style('stroke', (d) => {return d.stroke;})
       .style('stroke-width', 3);
 
     this.svg.selectAll("circle")
@@ -60,9 +62,17 @@ class Nodes {
     while (++i < n) q.visit(collide(this.nodeValues[i]));
     while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
 
+    console.log(this.nodeValues[0]);
+    if (Store.done == true) {
+      debugger
+      console.log(this);
+    }
+
     this.svg.selectAll("circle")
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+        .attr("cx", function(d) {
+          return d.x; })
+        .attr("cy", function(d) {
+          return d.y; });
 
     this.force.resume(.1);
   }
@@ -87,16 +97,25 @@ class Nodes {
   }
 
   updateNodeValues() {
-    const nodes = this.selectAllNodes().remove();
+    // const nodes = this.selectAllNodes().remove();
 
-    this.nodeValues = this.createNodes();
+    // this.nodeValues = this.createNodes();
 
+    const nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
 
-    // nodes
-    //   .attr("r", function(d) {
-    //     return d.radius; });
+    nodes
+      .attr('r', (d) => {
+        return d.radius; });
+      // .attr('cx', (d, i) => {
+      //   // return this.nodeValues[i].x;
+      //   return 100;
+      // })
+      // .attr('cy', (d, i) => {
+      //   // return this.nodeValues[i].y;
+      //   return 100;
+      // });
 
-    // debugger
+    Store.done = true;
 
     //
     // nodes.enter().append('circle')
