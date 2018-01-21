@@ -2,24 +2,24 @@ import { collide, boundaries } from '../util/movements';
 import Store from '../store/store';
 import { STYLING } from '../data/keys';
 import { updateTeamContainer } from '../actions/store_update_actions';
-
+import { merge } from 'lodash';
 
 class Nodes {
   constructor(svg, width, height) {
     this.svg = svg;
     this.width = width;
     this.height = height;
-    this.nodeValues = this.createNodes();
 
     this.handleTick = this.handleTick.bind(this);
     this.handleMouseover = this.handleMouseover.bind(this);
     this.handleMouseout = this.handleMouseout.bind(this);
 
+    this.nodeValues = this.createNodes();
     this.force.on("tick", this.handleTick);
   }
 
   createNodes() {
-    const nodeValues = this.getNodeValuesFromStore();
+    const nodeValues = this.updateNodeValues();
     const selectedNodes = this.selectAllNodes();
 
     selectedNodes
@@ -62,11 +62,6 @@ class Nodes {
     while (++i < n) q.visit(collide(this.nodeValues[i]));
     while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
 
-    console.log(this.nodeValues[0]);
-    if (Store.done == true) {
-      debugger
-      console.log(this);
-    }
 
     this.svg.selectAll("circle")
         .attr("cx", function(d) {
@@ -77,9 +72,11 @@ class Nodes {
     this.force.resume(.1);
   }
 
-  getNodeValuesFromStore() {
-    let nodes = Store.seasonData[String(Store.selectedYear)].map((team) => {
-      return {
+  updateNodeValues() {
+    const nodes = [];
+    const nodeValues = this.nodeValues;
+    Store.seasonData[String(Store.selectedYear)].forEach((team, i) => {
+      const newObj = {
         radius: team.w*.7,
         color: STYLING[team.teamName] ? STYLING[team.teamName].pri : 'white',
         stroke: STYLING[team.teamName] ? STYLING[team.teamName].sec : 'black',
@@ -88,43 +85,28 @@ class Nodes {
         wins: team.w,
         losses: team.l
       };
+      if (nodeValues != undefined) {
+        merge(nodeValues[i], newObj);
+      } else {
+        nodes.push(newObj);
+      }
     });
     return nodes;
   }
 
-  selectAllNodes () {
-    return this.svg.selectAll("circle");
+  updateNodes() {
+
+    this.updateNodeValues();
+    this.svg.selectAll('circle')
+    .transition().ease('linear')
+    .attr("r", (d) => { return d.radius; })
+    .attr('id', (d) => { return d.teamName; })
+    .style("fill", (d) => { return d.color; });
+
   }
 
-  updateNodeValues() {
-    // const nodes = this.selectAllNodes().remove();
-
-    // this.nodeValues = this.createNodes();
-
-    const nodes = this.selectAllNodes().data(this.getNodeValuesFromStore());
-
-    nodes
-      .attr('r', (d) => {
-        return d.radius; });
-      // .attr('cx', (d, i) => {
-      //   // return this.nodeValues[i].x;
-      //   return 100;
-      // })
-      // .attr('cy', (d, i) => {
-      //   // return this.nodeValues[i].y;
-      //   return 100;
-      // });
-
-    Store.done = true;
-
-    //
-    // nodes.enter().append('circle')
-    //   .attr('id', function(d) { return d.teamName; })
-    //   .attr("r", function(d) { return d.radius; })
-    //   .style("fill", function(d) { return d.color; })
-    //   .style('stroke', function(d) {return d.stroke;})
-    //   .style('stroke-width', 2);
-
+  selectAllNodes () {
+    return this.svg.selectAll("circle");
   }
 
   handleMouseover(d) {

@@ -1,5 +1,5 @@
 import Store from '../store/store';
-import { updateNodeValues } from '../actions/store_update_actions';
+import { updateNodes } from '../actions/store_update_actions';
 
 class Slider {
   constructor() {
@@ -11,8 +11,8 @@ class Slider {
     const mainContainer = document.getElementById('main-container');
     const slider = document.createElement('input');
     slider.setAttribute('type', 'range');
-    slider.setAttribute('min', '2013');
-    slider.setAttribute('max', '2014');
+    slider.setAttribute('min', '1996');
+    slider.setAttribute('max', '2017');
     slider.setAttribute('step', '1');
     slider.setAttribute('id', 'year-slider');
 
@@ -22,9 +22,9 @@ class Slider {
 
   handleChange() {
     const slider = document.getElementById('year-slider');
-    slider.onchange=((e)=> {
+    slider.oninput=((e)=> {
       Store.selectedYear = e.target.value;
-      updateNodeValues();
+      updateNodes();
     });
   }
 }

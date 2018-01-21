@@ -13,7 +13,6 @@ export const updateTeamContainer = () => {
   );
 };
 
-export const updateNodeValues = () => {
-  Store.nodes.updateNodeValues();
-
+export const updateNodes = () => {
+  Store.nodes.updateNodes();
 };
