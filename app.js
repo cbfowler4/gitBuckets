@@ -1,12 +1,12 @@
 import seasonData from './data/data';
-import parseSeasonData from './util/data_util';
+import {parseSeasonData} from './util/data_util';
 import Nodes from './components/nodes';
 import Slider from './components/slider';
 import Store from './store/store';
 import data from './data/team_data.json';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 
+  //
   // $.ajax({
   //   url: '/team',
   //   method: 'get'
@@ -20,12 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
   .attr("width", width)
   .attr("height", height);
 
-  console.log(parseSeasonData);
-  console.log(data);
+  // console.log(parseSeasonData);
+  // console.log(data);
   // debugger
-  Store.seasonData = seasonData;
-  // parseSeasonData(data);
-  // debugger
+  // Store.seasonData = seasonData;
+  Store.seasonData = parseSeasonData(data);
+  console.log(Store.seasonData);
   Store.nodes = new Nodes(svg, width, height);
 
   const slider = new Slider();

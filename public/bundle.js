@@ -123,8 +123,6 @@ var _data2 = _interopRequireDefault(_data);
 
 var _data_util = __webpack_require__(9);
 
-var _data_util2 = _interopRequireDefault(_data_util);
-
 var _nodes = __webpack_require__(4);
 
 var _nodes2 = _interopRequireDefault(_nodes);
@@ -144,7 +142,7 @@ var _team_data2 = _interopRequireDefault(_team_data);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener('DOMContentLoaded', function () {
-  // 
+  //
   // $.ajax({
   //   url: '/team',
   //   method: 'get'
@@ -156,12 +154,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var svg = d3.select("#svg-team-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
 
-  console.log(_data_util2.default);
-  console.log(_team_data2.default);
+  // console.log(parseSeasonData);
+  // console.log(data);
   // debugger
-  _store2.default.seasonData = _data2.default;
-  // parseSeasonData(data);
-  // debugger
+  // Store.seasonData = seasonData;
+  _store2.default.seasonData = (0, _data_util.parseSeasonData)(_team_data2.default);
+  console.log(_store2.default.seasonData);
   _store2.default.nodes = new _nodes2.default(svg, width, height);
 
   var slider = new _slider2.default();
@@ -1381,7 +1379,7 @@ var parseSeasonData = exports.parseSeasonData = function parseSeasonData(seasonD
   var parsedObj = {};
 
   Object.keys(seasonData).forEach(function (year) {
-    var sortedArray = Object.keys(seasonData[year].sort());
+    var sortedArray = Object.keys(seasonData[year]).sort();
     parsedObj[year] = sortedArray.map(function (teamId) {
       return seasonData[year][teamId];
     });
