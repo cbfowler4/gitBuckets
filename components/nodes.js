@@ -33,10 +33,15 @@ class Nodes {
       .style('stroke-width', 3);
 
     this.svg.selectAll("circle")
-      .on('mouseover', this.handleMouseover);
+      .on('mouseover', this.handleMouseover)
+      .on('click', this.handleClick);
 
     this.force = this.createForce(nodeValues);
     return nodeValues;
+  }
+
+  createLinks(res) {
+    // this.force.links(Object.values(res));
   }
 
 
@@ -55,8 +60,11 @@ class Nodes {
   updateNodeValues() {
     const nodes = [];
     const nodeValues = this.nodeValues;
-    Store.seasonData[String(Store.selectedYear)].forEach((team, i) => {
+    const teams = Store.seasonData[String(Store.selectedYear)];
+
+    teams.forEach((team, i) => {
       const newObj = {
+        teamId: team.teamId,
         radius: team.w*.7,
         color: STYLING[team.teamName] ? STYLING[team.teamName].pri : 'white',
         stroke: STYLING[team.teamName] ? STYLING[team.teamName].sec : 'black',
@@ -90,10 +98,12 @@ class Nodes {
     updateTeamContainer();
   }
 
-  handleClick() {
+  handleClick(e) {
     $.ajax({
-      url: `/team/${'hey'}`,
+      url: `/team/${e.teamId}`,
       method: 'get'
+    }).then((res) => {
+      this.createLinks(res);
     });
   }
 
