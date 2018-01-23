@@ -1,23 +1,24 @@
 import Store from '../store/store';
 
 export const boundaries = (node, width, height) => {
-  if (node.x - node.radius < 0) {
-    node.x = node.radius;
-  } else if (node.x + node.radius > width){
-    node.x = width - node.radius;
+  const buffer = 35;
+  if (node.x - node.radius < buffer) {
+    node.x = node.radius + buffer;
+  } else if (node.x + node.radius > width - buffer){
+    node.x = width - node.radius - buffer;
 
   }
 
-  if (node.y - node.radius < 0) {
-    node.y = node.radius;
-  } else if (node.y + node.radius > height) {
-    node.y = height - node.radius;
+  if (node.y - node.radius < buffer) {
+    node.y = node.radius + buffer;
+  } else if (node.y + node.radius > height - buffer) {
+    node.y = height - node.radius - buffer;
   }
 };
 
 
 export const collide = (node) => {
-  var r = node.radius+200,
+  var r = node.radius+500,
       nx1 = node.x - r,
       nx2 = node.x + r,
       ny1 = node.y - r,

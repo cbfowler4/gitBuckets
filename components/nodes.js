@@ -15,9 +15,11 @@ class Nodes {
     this.handleMouseout = this.handleMouseout.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.activeClickedTeam = this.activeClickedTeam.bind(this);
+    this.handleResize = this.handleResize.bind(this);
 
     this.nodeValues = this.createNodes();
     this.force.on("tick", this.handleTick);
+    window.addEventListener('resize', this.handleResize);
   }
 
   createNodes() {
@@ -47,10 +49,12 @@ class Nodes {
 
 
   createForce(nodeValues) {
+    const chargeWindowRatio = Math.min(this.width, this.height)/Math.max(this.width, this.height);
+
     const force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
-          return i ? -d.radius*15 : 0; })
+          return i ? -(d.radius*d.radius+200)*chargeWindowRatio : 0; })
         .nodes(nodeValues)
         .size([this.width, this.height]);
     force.start();
@@ -64,6 +68,11 @@ class Nodes {
     const teams = Store.seasonData[String(Store.selectedYear)];
 
     teams.forEach((team, i) => {
+      if (team.w === undefined) {
+        team.w = 0;
+        team.l = 1;
+      }
+
       const newObj = {
         teamId: team.teamId,
         radius: team.w/(team.w+team.l)*50,
@@ -87,11 +96,12 @@ class Nodes {
 
     this.updateNodeValues();
     this.svg.selectAll('circle')
-    .transition().ease('linear')
+    .transition().ease('linear').duration(500)
     .attr("r", (d) => { return d.radius*1.25; })
     .attr('id', (d) => { return d.teamName; })
     .style("fill", (d) => { return d.color; });
 
+    this.force.start();
   }
 
   handleMouseover(d) {
@@ -133,6 +143,22 @@ class Nodes {
     const activeNode = document.getElementById(e.teamName)
     activeNode.setAttribute('cx', e.x);
     activeNode.setAttribute('cy', e.y);
+
+    const force = d3.layout.force()
+        .gravity(.1)
+        .charge(function(d, i) {
+          return d.teamName === e.teamName ? -5000 : -30; })
+        .nodes(this.nodeValues)
+        .size([this.width, this.height]);
+    force.start();
+    force.on("tick", this.handleTick);
+
+  }
+
+  handleResize() {
+    this.width = window.innerWidth*.75;
+    this.height = window.innerHeight;
+    this.force.size([this.width, this.height]);
   }
 
   handleTick(e) {

@@ -8,8 +8,8 @@ export const updateTeamContainer = () => {
     `<h1>${Store.activeTeam != null ? formatTeamName(Store.activeTeam.teamName) : ""}</h1>
     <img src="/images/logos/${Store.activeTeam != null ? Store.activeTeam.logo : "nba.png"}"></img>
     <ul>
-      <li>Wins: ${Store.activeTeam.wins}</li>
-      <li>Losses: ${Store.activeTeam.losses}</li>
+      <li>Wins: ${Store.activeTeam != null ? Store.activeTeam.wins : ""}</li>
+      <li>Losses: ${Store.activeTeam != null ? Store.activeTeam.losses : ""}</li>
     </ul>`
   );
 };

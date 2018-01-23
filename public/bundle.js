@@ -141,7 +141,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var updateTeamContainer = exports.updateTeamContainer = function updateTeamContainer() {
   var teamContainer = document.getElementById('team-sidebar');
 
-  teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? (0, _data_util.formatTeamName)(_store2.default.activeTeam.teamName) : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + _store2.default.activeTeam.wins + '</li>\n      <li>Losses: ' + _store2.default.activeTeam.losses + '</li>\n    </ul>';
+  teamContainer.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? (0, _data_util.formatTeamName)(_store2.default.activeTeam.teamName) : "") + '</h1>\n    <img src="/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.wins : "") + '</li>\n      <li>Losses: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.losses : "") + '</li>\n    </ul>';
 };
 
 var updateNodes = exports.updateNodes = function updateNodes() {
@@ -1112,9 +1112,11 @@ var Nodes = function () {
     this.handleMouseout = this.handleMouseout.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.activeClickedTeam = this.activeClickedTeam.bind(this);
+    this.handleResize = this.handleResize.bind(this);
 
     this.nodeValues = this.createNodes();
     this.force.on("tick", this.handleTick);
+    window.addEventListener('resize', this.handleResize);
   }
 
   _createClass(Nodes, [{
@@ -1145,8 +1147,10 @@ var Nodes = function () {
   }, {
     key: 'createForce',
     value: function createForce(nodeValues) {
+      var chargeWindowRatio = Math.min(this.width, this.height) / Math.max(this.width, this.height);
+
       var force = d3.layout.force().gravity(.1).charge(function (d, i) {
-        return i ? -d.radius * 15 : 0;
+        return i ? -(d.radius * d.radius + 200) * chargeWindowRatio : 0;
       }).nodes(nodeValues).size([this.width, this.height]);
       force.start();
       return force;
@@ -1159,6 +1163,11 @@ var Nodes = function () {
       var teams = _store2.default.seasonData[String(_store2.default.selectedYear)];
 
       teams.forEach(function (team, i) {
+        if (team.w === undefined) {
+          team.w = 0;
+          team.l = 1;
+        }
+
         var newObj = {
           teamId: team.teamId,
           radius: team.w / (team.w + team.l) * 50,
@@ -1182,13 +1191,15 @@ var Nodes = function () {
     value: function updateNodes() {
 
       this.updateNodeValues();
-      this.svg.selectAll('circle').transition().ease('linear').attr("r", function (d) {
+      this.svg.selectAll('circle').transition().ease('linear').duration(500).attr("r", function (d) {
         return d.radius * 1.25;
       }).attr('id', function (d) {
         return d.teamName;
       }).style("fill", function (d) {
         return d.color;
       });
+
+      this.force.start();
     }
   }, {
     key: 'handleMouseover',
@@ -1234,6 +1245,19 @@ var Nodes = function () {
       var activeNode = document.getElementById(e.teamName);
       activeNode.setAttribute('cx', e.x);
       activeNode.setAttribute('cy', e.y);
+
+      var force = d3.layout.force().gravity(.1).charge(function (d, i) {
+        return d.teamName === e.teamName ? -5000 : -30;
+      }).nodes(this.nodeValues).size([this.width, this.height]);
+      force.start();
+      force.on("tick", this.handleTick);
+    }
+  }, {
+    key: 'handleResize',
+    value: function handleResize() {
+      this.width = window.innerWidth * .75;
+      this.height = window.innerHeight;
+      this.force.size([this.width, this.height]);
     }
   }, {
     key: 'handleTick',
@@ -1281,21 +1305,22 @@ var _store2 = _interopRequireDefault(_store);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var boundaries = exports.boundaries = function boundaries(node, width, height) {
-  if (node.x - node.radius < 0) {
-    node.x = node.radius;
-  } else if (node.x + node.radius > width) {
-    node.x = width - node.radius;
+  var buffer = 35;
+  if (node.x - node.radius < buffer) {
+    node.x = node.radius + buffer;
+  } else if (node.x + node.radius > width - buffer) {
+    node.x = width - node.radius - buffer;
   }
 
-  if (node.y - node.radius < 0) {
-    node.y = node.radius;
-  } else if (node.y + node.radius > height) {
-    node.y = height - node.radius;
+  if (node.y - node.radius < buffer) {
+    node.y = node.radius + buffer;
+  } else if (node.y + node.radius > height - buffer) {
+    node.y = height - node.radius - buffer;
   }
 };
 
 var collide = exports.collide = function collide(node) {
-  var r = node.radius + 200,
+  var r = node.radius + 500,
       nx1 = node.x - r,
       nx2 = node.x + r,
       ny1 = node.y - r,
