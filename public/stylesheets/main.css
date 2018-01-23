@@ -44,7 +44,7 @@ header img {
 
 
 #main-container {
-  width: 75%;
+  width: 70%;
   height: inherit;
   position: relative;
   background-color: #FFFFFF;
@@ -125,12 +125,18 @@ svg {
     cursor: pointer;
 }
 
+
+
 #year-slider::-moz-range-thumb {
     width: 25px;
     height: 25px;
     border-radius: 50%;
     background: #FE4119;
     cursor: pointer;
+}
+
+#year-display {
+  font-size: 35px;
 }
 
 circle:hover {

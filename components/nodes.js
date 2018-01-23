@@ -14,6 +14,7 @@ class Nodes {
     this.handleMouseover = this.handleMouseover.bind(this);
     this.handleMouseout = this.handleMouseout.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.activeClickedTeam = this.activeClickedTeam.bind(this);
 
     this.nodeValues = this.createNodes();
     this.force.on("tick", this.handleTick);
@@ -106,12 +107,32 @@ class Nodes {
   }
 
   handleClick(e) {
-    $.ajax({
-      url: `/team/${e.teamId}`,
-      method: 'get'
-    }).then((res) => {
-      this.createLinks(res);
-    });
+    // $.ajax({
+    //   url: `/team/${e.teamId}`,
+    //   method: 'get'
+    // }).then((res) => {
+    //   this.createLinks(res);
+    // });
+
+    if (Store.clickedTeam === e.teamName) {
+      this.force.resume();
+      Store.clickedTeam = null;
+    } else if (Store.clickedTeam != null){
+      //do something with Store.clickedTeam
+    } else {
+      this.activeClickedTeam(e);
+    }
+  }
+
+  activeClickedTeam(e) {
+    Store.clickedTeam = e.teamName;
+    e.x = (window.innerWidth - window.innerWidth*.30)/2;
+    e.y = window.innerHeight/2;
+
+    this.force.stop();
+    const activeNode = document.getElementById(e.teamName)
+    activeNode.setAttribute('cx', e.x);
+    activeNode.setAttribute('cy', e.y);
   }
 
   handleTick(e) {
