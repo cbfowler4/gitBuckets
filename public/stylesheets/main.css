@@ -8,26 +8,61 @@
 
 
 html {
-  /* background-color: ; */
-  background-image: linear-gradient(
-    to top,
-    rgba(108, 100, 139, .15),
-    rgba(0,0,0,0) 7%
-    );
   object-fit: cover;
   height: 100%;
-  
+  background-color: #364d70;
 }
 
 body {
   display: flex;
+  height: inherit;
+}
+
+header {
+  position: relative;
+  width: 30%;
+}
+
+#sidebar-container {
+  width: 100%;
+  background-color: #364d70;
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-left: 50px;
+  align-items: center;
+  color: #FFFFFF;
+}
+
+header h1 {
+  width: 350px;
+}
+
+header img {
+  height: 357px;
+  width: 433px;
+  transform: scale(.8);
+}
+
+
+#main-container {
+  width: 75%;
+  height: inherit;
+  position: relative;
+  background-color: #FFFFFF;
+}
+
+#main-container h2 {
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
 }
 
 svg {
-  padding: 15px;
+  box-sizing: border-box;
+  position: absolute;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  box-shadow: rgba(0,0,0,.1) -7px 0 7px;
 }
 
 #page-header {
@@ -35,19 +70,17 @@ svg {
   padding: 20px 0;
 }
 
-#svg-team-container {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 50px;
-}
-
 #team-sidebar {
-  margin-left: 50px;
-  height: 600px;
-  width: 300px;
-  display: flex;
+  padding: 20px;
+  margin: 50px;
+  height: 250px;
+  width: 250px;
+  display: none;
   flex-direction: column;
   align-items: center;
+  position: absolute;
+  border: 2px solid #364d70;
+  box-shadow: rgba(0,0,0,.1) 2px 2px 2px;
 }
 
 #team-sidebar img {
@@ -67,20 +100,14 @@ svg {
 
 #year-slider {
   position: absolute;
-  top: 376px;
-  left: -150px;
+  bottom: 10px;
   -webkit-appearance: none;
   -webkit-transition: .2s;
-  width: 420px;
-  height: 15px;
+  width: 95%;
+  height: 20px;
   background-color: rgba(0,0,0,.4);
   outline: none;
   border-radius: 8px;
-  -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);
   margin: 10px;
 }
 

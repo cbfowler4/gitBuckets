@@ -187,13 +187,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // });
 
 
-  var width = 700;
-  var height = 600;
-
-  var svg = d3.select("#svg-team-container").insert("svg", ":first-child").attr("width", width).attr("height", height);
+  var svg = d3.select("#main-container svg");
 
   _store2.default.seasonData = (0, _data_util.parseSeasonData)(_team_data2.default);
-  _store2.default.nodes = new _nodes2.default(svg, width, height);
+  _store2.default.nodes = new _nodes2.default(svg);
 
   var slider = new _slider2.default();
 
@@ -1103,15 +1100,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Nodes = function () {
-  function Nodes(svg, width, height) {
+  function Nodes(svg) {
     _classCallCheck(this, Nodes);
 
     this.svg = svg;
-    this.width = width;
-    this.height = height;
+    this.width = window.innerWidth * .75;
+    this.height = window.innerHeight;
 
     this.handleTick = this.handleTick.bind(this);
     this.handleMouseover = this.handleMouseover.bind(this);
+    this.handleMouseout = this.handleMouseout.bind(this);
     this.handleClick = this.handleClick.bind(this);
 
     this.nodeValues = this.createNodes();
@@ -1121,25 +1119,19 @@ var Nodes = function () {
   _createClass(Nodes, [{
     key: 'createNodes',
     value: function createNodes() {
-      var _this = this;
-
       var nodeValues = this.updateNodeValues();
 
       this.svg.selectAll('circle').data(nodeValues).enter().append("circle").attr("r", function (d) {
-        return d.radius;
+        return d.radius * 1.25;
       }).attr('id', function (d) {
         return d.teamName;
-      }).attr('cx', function (d) {
-        return Math.random() * _this.width;
-      }).attr('cy', function (d) {
-        return Math.random() * _this.height;
       }).style("fill", function (d) {
         return d.color;
       }).style('stroke', function (d) {
         return d.stroke;
       }).style('stroke-width', 3);
 
-      this.svg.selectAll("circle").on('mouseover', this.handleMouseover).on('click', this.handleClick);
+      this.svg.selectAll("circle").on('mouseover', this.handleMouseover).on('mouseout', this.handleMouseout).on('click', this.handleClick);
 
       this.force = this.createForce(nodeValues);
       return nodeValues;
@@ -1153,7 +1145,7 @@ var Nodes = function () {
     key: 'createForce',
     value: function createForce(nodeValues) {
       var force = d3.layout.force().gravity(.1).charge(function (d, i) {
-        return i ? -d.radius * 9 : 0;
+        return i ? -d.radius * 15 : 0;
       }).nodes(nodeValues).size([this.width, this.height]);
       force.start();
       return force;
@@ -1168,7 +1160,7 @@ var Nodes = function () {
       teams.forEach(function (team, i) {
         var newObj = {
           teamId: team.teamId,
-          radius: team.w * .7,
+          radius: team.w / (team.w + team.l) * 50,
           color: _keys.STYLING[team.teamName] ? _keys.STYLING[team.teamName].pri : 'white',
           stroke: _keys.STYLING[team.teamName] ? _keys.STYLING[team.teamName].sec : 'black',
           teamName: team.teamName,
@@ -1190,7 +1182,7 @@ var Nodes = function () {
 
       this.updateNodeValues();
       this.svg.selectAll('circle').transition().ease('linear').attr("r", function (d) {
-        return d.radius;
+        return d.radius * 1.25;
       }).attr('id', function (d) {
         return d.teamName;
       }).style("fill", function (d) {
@@ -1201,18 +1193,26 @@ var Nodes = function () {
     key: 'handleMouseover',
     value: function handleMouseover(d) {
       _store2.default.activeTeam = d;
+      var teamSidebar = document.getElementById('team-sidebar');
+      teamSidebar.style.display = 'flex';
       (0, _store_update_actions.updateTeamContainer)();
+    }
+  }, {
+    key: 'handleMouseout',
+    value: function handleMouseout(d) {
+      var teamSidebar = document.getElementById('team-sidebar');
+      teamSidebar.style.display = 'none';
     }
   }, {
     key: 'handleClick',
     value: function handleClick(e) {
-      var _this2 = this;
+      var _this = this;
 
       $.ajax({
         url: '/team/' + e.teamId,
         method: 'get'
       }).then(function (res) {
-        _this2.createLinks(res);
+        _this.createLinks(res);
       });
     }
   }, {
@@ -18533,6 +18533,8 @@ var Slider = function () {
     _classCallCheck(this, Slider);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.updateYear = this.updateYear.bind(this);
     this.createSlider();
     this.handleChange();
   }
@@ -18540,34 +18542,40 @@ var Slider = function () {
   _createClass(Slider, [{
     key: 'createSlider',
     value: function createSlider() {
-      var svgContainer = document.getElementById('svg-team-container');
-
-      var sliderContainer = document.createElement('div');
-      sliderContainer.setAttribute('id', 'slider-container');
-
-      var slider = document.createElement('input');
-      slider.setAttribute('type', 'range');
-      slider.setAttribute('min', '1996');
-      slider.setAttribute('max', '2017');
-      slider.setAttribute('step', '1');
-      slider.setAttribute('id', 'year-slider');
-
       var yearDisplay = document.getElementById('year-display');
-      yearDisplay.innerHTML = 'Season: ' + (0, _data_util.formatSeason)(1996);
 
-      svgContainer.prepend(slider);
+      window.addEventListener('wheel', this.handleScroll);
+      yearDisplay.innerHTML = 'Season: ' + (0, _data_util.formatSeason)(1996);
+    }
+  }, {
+    key: 'handleScroll',
+    value: function handleScroll(e) {
+      var yearSlider = document.getElementById('year-slider');
+      var movement = e.wheelDelta / 120;
+
+      yearSlider.value = String(parseInt(yearSlider.value) + movement);
+      _store2.default.selectedYear = yearSlider.value;
+      this.updateYear();
     }
   }, {
     key: 'handleChange',
     value: function handleChange() {
+      var _this = this;
+
       var slider = document.getElementById('year-slider');
-      var yearDisplay = document.getElementById('year-display');
       slider.oninput = function (e) {
         _store2.default.selectedYear = e.target.value;
-        yearDisplay.innerHTML = 'Season: ' + (0, _data_util.formatSeason)(parseInt(e.target.value));
-        (0, _store_update_actions.updateNodes)();
-        (0, _store_update_actions.updateTeamContainer)();
+        _this.updateYear();
       };
+    }
+  }, {
+    key: 'updateYear',
+    value: function updateYear() {
+      var yearDisplay = document.getElementById('year-display');
+
+      yearDisplay.innerHTML = 'Season: ' + (0, _data_util.formatSeason)(parseInt(_store2.default.selectedYear));
+      (0, _store_update_actions.updateNodes)();
+      (0, _store_update_actions.updateTeamContainer)();
     }
   }]);
 

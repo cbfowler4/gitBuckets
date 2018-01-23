@@ -5,13 +5,14 @@ import { updateTeamContainer } from '../actions/store_update_actions';
 import { merge } from 'lodash';
 
 class Nodes {
-  constructor(svg, width, height) {
+  constructor(svg) {
     this.svg = svg;
-    this.width = width;
-    this.height = height;
+    this.width = window.innerWidth*.75;
+    this.height = window.innerHeight;
 
     this.handleTick = this.handleTick.bind(this);
     this.handleMouseover = this.handleMouseover.bind(this);
+    this.handleMouseout = this.handleMouseout.bind(this);
     this.handleClick = this.handleClick.bind(this);
 
     this.nodeValues = this.createNodes();
@@ -24,16 +25,15 @@ class Nodes {
     this.svg.selectAll('circle')
       .data(nodeValues)
       .enter().append("circle")
-      .attr("r", (d) => { return d.radius; })
+      .attr("r", (d) => { return d.radius*1.25; })
       .attr('id', (d) => { return d.teamName; })
-      .attr('cx', (d) => { return Math.random()*this.width;})
-      .attr('cy', (d) => { return Math.random()*this.height;})
       .style("fill", (d) => { return d.color; })
       .style('stroke', (d) => {return d.stroke;})
       .style('stroke-width', 3);
 
     this.svg.selectAll("circle")
       .on('mouseover', this.handleMouseover)
+      .on('mouseout', this.handleMouseout)
       .on('click', this.handleClick);
 
     this.force = this.createForce(nodeValues);
@@ -49,7 +49,7 @@ class Nodes {
     const force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
-          return i ? -d.radius*9 : 0; })
+          return i ? -d.radius*15 : 0; })
         .nodes(nodeValues)
         .size([this.width, this.height]);
     force.start();
@@ -65,7 +65,7 @@ class Nodes {
     teams.forEach((team, i) => {
       const newObj = {
         teamId: team.teamId,
-        radius: team.w*.7,
+        radius: team.w/(team.w+team.l)*50,
         color: STYLING[team.teamName] ? STYLING[team.teamName].pri : 'white',
         stroke: STYLING[team.teamName] ? STYLING[team.teamName].sec : 'black',
         teamName: team.teamName,
@@ -87,7 +87,7 @@ class Nodes {
     this.updateNodeValues();
     this.svg.selectAll('circle')
     .transition().ease('linear')
-    .attr("r", (d) => { return d.radius; })
+    .attr("r", (d) => { return d.radius*1.25; })
     .attr('id', (d) => { return d.teamName; })
     .style("fill", (d) => { return d.color; });
 
@@ -95,7 +95,14 @@ class Nodes {
 
   handleMouseover(d) {
     Store.activeTeam = d;
+    const teamSidebar = document.getElementById('team-sidebar');
+    teamSidebar.style.display = 'flex';
     updateTeamContainer();
+  }
+
+  handleMouseout(d) {
+    const teamSidebar = document.getElementById('team-sidebar');
+    teamSidebar.style.display = 'none';
   }
 
   handleClick(e) {

@@ -10,17 +10,23 @@
     <link href="https://fonts.googleapis.com/css?family=Maven+Pro" rel="stylesheet">
   </head>
   <body>
-    <h1 id='page-header'>GitBuckets: An NBA data visualization tool</h1>
-    <h2 id='year-display'><h2>
+    <header>
+      <div id='sidebar-container'>
+        <img src='/images/logos/GitBuckets.png'></img>
+        <h1 id='page-header'>An NBA data visualization tool</h1>
+      </div>
+        <!-- <h1>Welcome</h1> -->
+        <!-- <br> -->
+        <!-- <h3>Use the slider or hover over a team to begin<h3> -->
+          <!-- <img src="/images/logos/nba.png"></img> -->
+    </header>
     <div id="main-container">
-      <content id="svg-team-container">
-        <div id="team-sidebar">
-          <h1>Welcome</h1>
-          <br>
-          <h3>Use the slider or hover over a team to begin<h3>
-          <img src="/images/logos/nba.png"></img>
-        </div>
-      </content>
+
+      <svg>
+        <div id="team-sidebar"></div>
+      </svg>
+      <input type='range' id='year-slider' min='1996' max='2017' step='1'></input>
+      <h2 id='year-display'><h2>
     </div>
   </body>
 </html>

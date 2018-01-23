@@ -13,15 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // });
 
 
-  const width = 700;
-  const height = 600;
-
-  const svg = d3.select("#svg-team-container").insert("svg", ":first-child")
-  .attr("width", width)
-  .attr("height", height);
+  const svg = d3.select("#main-container svg");
 
   Store.seasonData = parseSeasonData(data);
-  Store.nodes = new Nodes(svg, width, height);
+  Store.nodes = new Nodes(svg);
 
   const slider = new Slider();
 
