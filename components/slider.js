@@ -1,5 +1,5 @@
 import Store from '../store/store';
-import { updateNodes, updateTeamContainer } from '../actions/store_update_actions';
+import { updateTeamShow } from './team_show';
 import { formatSeason } from '../util/data_util';
 
 class Slider {
@@ -39,10 +39,12 @@ class Slider {
     const yearDisplay = document.getElementById('year-display');
 
     yearDisplay.innerHTML = (`Season: ${formatSeason(parseInt(Store.selectedYear))}`);
-    updateNodes();
-    updateTeamContainer();
+    Store.nodes.updateNodes();
+    updateTeamShow();
   }
 }
+
+
 
 
 export default Slider;

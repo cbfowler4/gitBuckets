@@ -1,14 +1,14 @@
 import { collide, boundaries } from '../util/movements';
 import Store from '../store/store';
 import { STYLING } from '../data/keys';
-import { updateTeamContainer } from '../actions/store_update_actions';
+import { updateTeamShow } from './team_show';
 import { merge } from 'lodash';
 
 class Nodes {
   constructor(svg) {
     this.svg = svg;
     this.width = window.innerWidth*.75;
-    this.height = window.innerHeight;
+    this.height = (window.innerHeight-100);
 
     this.handleTick = this.handleTick.bind(this);
     this.handleMouseover = this.handleMouseover.bind(this);
@@ -37,7 +37,7 @@ class Nodes {
     this.svg.selectAll("circle")
       .on('mouseover', this.handleMouseover)
       .on('mouseout', this.handleMouseout)
-      .on('click', this.handleClick);
+      // .on('click', this.handleClick);
 
     this.force = this.createForce(nodeValues);
     return nodeValues;
@@ -93,7 +93,6 @@ class Nodes {
   }
 
   updateNodes() {
-
     this.updateNodeValues();
     this.svg.selectAll('circle')
     .transition().ease('linear').duration(500)
@@ -104,11 +103,31 @@ class Nodes {
     this.force.start();
   }
 
+  activeClickedTeam(e) {
+    Store.clickedTeam = e.teamName;
+    e.x = window.innerWidth*.75/2;
+    e.y = (window.innerHeight-100)/2;
+
+    this.force.stop();
+    const activeNode = document.getElementById(e.teamName)
+    activeNode.setAttribute('cx', e.x);
+    activeNode.setAttribute('cy', e.y);
+
+    const force = d3.layout.force()
+    .gravity(.1)
+    .charge(function(d, i) {
+      return d.teamName === e.teamName ? -15000 : -500; })
+      .nodes(this.nodeValues)
+      .size([this.width, this.height]);
+      force.start();
+      force.on("tick", this.handleTick(force));
+    }
+
   handleMouseover(d) {
     Store.activeTeam = d;
     const teamSidebar = document.getElementById('team-sidebar');
     teamSidebar.style.display = 'flex';
-    updateTeamContainer();
+    updateTeamShow();
   }
 
   handleMouseout(d) {
@@ -133,36 +152,17 @@ class Nodes {
     }
   }
 
-  activeClickedTeam(e) {
-    Store.clickedTeam = e.teamName;
-    e.x = window.innerWidth*.75/2;
-    e.y = window.innerHeight/2;
-
-    this.force.stop();
-    const activeNode = document.getElementById(e.teamName)
-    activeNode.setAttribute('cx', e.x);
-    activeNode.setAttribute('cy', e.y);
-
-    const force = d3.layout.force()
-        .gravity(.1)
-        .charge(function(d, i) {
-          return d.teamName === e.teamName ? -15000 : -500; })
-        .nodes(this.nodeValues)
-        .size([this.width, this.height]);
-    force.start();
-    force.on("tick", this.handleTick(force));
-  }
 
   handleResize() {
     this.width = window.innerWidth*.75;
-    this.height = window.innerHeight;
+    this.height = (window.innerHeight-100);
     this.force.size([this.width, this.height]);
   }
 
   handleTick(force) {
     return (e) => {
       const centerX = window.innerWidth*.75/2;
-      const centerY = window.innerHeight/2;
+      const centerY = (window.innerHeight-100)/2;
 
       let q = d3.geom.quadtree(this.nodeValues),
       i = 0,

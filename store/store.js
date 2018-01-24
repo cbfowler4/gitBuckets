@@ -1,6 +1,6 @@
 const store = {
   activeTeam: null,
-  selectedYear: 2013,
+  selectedYear: 1996,
   nodes: null,
   seasonData: null,
   done: false
