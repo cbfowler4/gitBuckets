@@ -1,8 +1,8 @@
-import {parseSeasonData} from './util/data_util';
-import Nodes from './components/nodes';
-import Slider from './components/slider';
-import Store from './store/store';
-import data from './data/team_data.json';
+import {parseSeasonData} from '../util/data_util';
+import Nodes from './nodes';
+import Slider from './slider';
+import Store from '../store/store';
+import data from '../data/team_data.json';
 
 document.addEventListener('DOMContentLoaded', () => {
 
