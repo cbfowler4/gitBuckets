@@ -385,8 +385,8 @@ var Nodes = function () {
         var centerY = (window.innerHeight - 100) / 2;
 
         var q = d3.geom.quadtree(_this.nodeValues),
-            i = 0,
-            j = 0,
+            i = -1,
+            j = -1,
             n = _this.nodeValues.length;
 
         while (++i < n) {

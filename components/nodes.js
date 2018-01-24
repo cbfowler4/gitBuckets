@@ -165,8 +165,8 @@ class Nodes {
       const centerY = (window.innerHeight-100)/2;
 
       let q = d3.geom.quadtree(this.nodeValues),
-      i = 0,
-      j = 0,
+      i = -1,
+      j = -1,
       n = this.nodeValues.length;
 
       while (++i < n) q.visit(collide(this.nodeValues[i]));

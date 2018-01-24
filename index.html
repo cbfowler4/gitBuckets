@@ -2,25 +2,43 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>gitBuckets</title>
+    <link rel='shortcut icon' href='favicon.ico'/>
     <script src="bundle.js"></script>
     <script src="https://d3js.org/d3.v3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="assets/stylesheets/main.css" />
     <link href="https://fonts.googleapis.com/css?family=Maven+Pro" rel="stylesheet">
+
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
   </head>
 
   <body>
-    <header>
+    <header class='animated slideInLeft'>
       <div id='sidebar-container'>
         <img src='assets/images/logos/GitBuckets.png'></img>
-        <h1 id='page-header'>An NBA data visualization tool</h1>
+        <h1 id='page-header'>An NBA standings visualization tool</h1>
+        <p>The sizes of the floating orbs represent a team's win percentage. Each orb has a negative charge that will repel other orbs, the larger the orb the greater the charge. gitBuckets is a tool for interpretting the dominance of a team.</p>
+        <ul>To Use:
+          <li>Move the slider to change the season year</li>
+          <li>Hover over an orb to view team win/loss information</li>
+        </ul>
       </div>
     </header>
 
-    <div id="main-container">
+    <div class='animated slideInDown' id="main-container">
       <svg id='node-svg'>
         <div id="team-sidebar"></div>
+        <div id="contact-info">
+          <ul>
+            <li><a id='website-link' href='http://www.bryanfowler.io'><i class="fa fa-home" aria-hidden="true"></i></a></li>
+            <li><a id='linkedin-link' href='https://www.linkedin.com/in/bryanfowlerme/'><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+            <li><a id='github-link' href='https://github.com/cbfowler4/gitBuckets'><i class="fa fa-github" aria-hidden="true"></i></a></li>
+          </ul>
+        </div>
       </svg>
 
       <input type='range' id='year-slider' min='1996' max='2017' step='1' value="1996"></input>
