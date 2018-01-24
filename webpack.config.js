@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './app.js',
   output: {
-    filename: 'public/bundle.js',
+    filename: 'bundle.js',
   },
   node: {
   fs: 'empty'

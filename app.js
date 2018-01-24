@@ -1,4 +1,3 @@
-import seasonData from './data/data';
 import {parseSeasonData} from './util/data_util';
 import Nodes from './components/nodes';
 import Slider from './components/slider';
@@ -20,5 +19,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const slider = new Slider();
 
-  const teamContainer = document.getElementById("team-sidebar");
 });

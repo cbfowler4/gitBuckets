@@ -3,29 +3,27 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <script src="/bundle.js"></script>
+    <script src="bundle.js"></script>
     <script src="https://d3js.org/d3.v3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="stylesheets/main.css" />
+    <link rel="stylesheet" href="assets/stylesheets/main.css" />
     <link href="https://fonts.googleapis.com/css?family=Maven+Pro" rel="stylesheet">
   </head>
+
   <body>
     <header>
       <div id='sidebar-container'>
-        <img src='/images/logos/GitBuckets.png'></img>
+        <img src='assets/images/logos/GitBuckets.png'></img>
         <h1 id='page-header'>An NBA data visualization tool</h1>
       </div>
-        <!-- <h1>Welcome</h1> -->
-        <!-- <br> -->
-        <!-- <h3>Use the slider or hover over a team to begin<h3> -->
-          <!-- <img src="/images/logos/nba.png"></img> -->
     </header>
-    <div id="main-container">
 
+    <div id="main-container">
       <svg id='node-svg'>
         <div id="team-sidebar"></div>
       </svg>
-      <input type='range' id='year-slider' min='1996' max='2017' step='1'></input>
+
+      <input type='range' id='year-slider' min='1996' max='2017' step='1' value="1996"></input>
       <h2 id='year-display'><h2>
     </div>
   </body>

@@ -1,7 +1,7 @@
 import { collide, boundaries } from '../util/movements';
 import Store from '../store/store';
 import { STYLING } from '../data/keys';
-import { updateTeamContainer } from '../actions/store_update_actions';
+import { updateTeamShow } from './team_show';
 import { merge } from 'lodash';
 
 class Nodes {
@@ -108,7 +108,7 @@ class Nodes {
     Store.activeTeam = d;
     const teamSidebar = document.getElementById('team-sidebar');
     teamSidebar.style.display = 'flex';
-    updateTeamContainer();
+    updateTeamShow();
   }
 
   handleMouseout(d) {
