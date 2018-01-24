@@ -18,7 +18,7 @@ class Nodes {
     this.handleResize = this.handleResize.bind(this);
 
     this.nodeValues = this.createNodes();
-    this.force.on("tick", this.handleTick);
+    this.force.on("tick", this.handleTick(this.force));
     window.addEventListener('resize', this.handleResize);
   }
 
@@ -125,7 +125,6 @@ class Nodes {
     // });
 
     if (Store.clickedTeam === e.teamName) {
-      this.force.resume();
       Store.clickedTeam = null;
     } else if (Store.clickedTeam != null){
       //do something with Store.clickedTeam
@@ -136,7 +135,7 @@ class Nodes {
 
   activeClickedTeam(e) {
     Store.clickedTeam = e.teamName;
-    e.x = (window.innerWidth - window.innerWidth*.30)/2;
+    e.x = window.innerWidth*.75/2;
     e.y = window.innerHeight/2;
 
     this.force.stop();
@@ -147,12 +146,11 @@ class Nodes {
     const force = d3.layout.force()
         .gravity(.1)
         .charge(function(d, i) {
-          return d.teamName === e.teamName ? -5000 : -30; })
+          return d.teamName === e.teamName ? -15000 : -500; })
         .nodes(this.nodeValues)
         .size([this.width, this.height]);
     force.start();
-    force.on("tick", this.handleTick);
-
+    force.on("tick", this.handleTick(force));
   }
 
   handleResize() {
@@ -161,24 +159,36 @@ class Nodes {
     this.force.size([this.width, this.height]);
   }
 
-  handleTick(e) {
-    let q = d3.geom.quadtree(this.nodeValues),
-    i = 0,
-    j = 0,
-    n = this.nodeValues.length;
+  handleTick(force) {
+    return (e) => {
+      const centerX = window.innerWidth*.75/2;
+      const centerY = window.innerHeight/2;
 
-    while (++i < n) q.visit(collide(this.nodeValues[i]));
-    while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
+      let q = d3.geom.quadtree(this.nodeValues),
+      i = 0,
+      j = 0,
+      n = this.nodeValues.length;
 
+      while (++i < n) q.visit(collide(this.nodeValues[i]));
+      while (++j < n) boundaries(this.nodeValues[j], this.width, this.height);
 
-    this.svg.selectAll("circle")
-    .attr("cx", function(d) {
-      return d.x; })
-      .attr("cy", function(d) {
-        return d.y; });
+      this.svg.selectAll("circle")
+        .attr("cx", function(d) {
+          if (d.teamName != Store.clickedTeam) {
+            return d.x;
+          } else {
+            return centerX;
+          }})
+        .attr("cy", function(d) {
+          if (d.teamName != Store.clickedTeam) {
+            return d.y;
+          } else {
+             return centerY;
+          }});
 
-        this.force.resume(.1);
-      }
+      force.resume(.1);
+    };
+  }
 }
 
 export default Nodes;
