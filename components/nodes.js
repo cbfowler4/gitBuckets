@@ -36,7 +36,7 @@ class Nodes {
 
     this.svg.selectAll("circle")
       .on('mouseover', this.handleMouseover)
-      .on('mouseout', this.handleMouseout)
+      .on('mouseout', this.handleMouseout);
       // .on('click', this.handleClick);
 
     this.force = this.createForce(nodeValues);
@@ -126,6 +126,8 @@ class Nodes {
   handleMouseover(d) {
     Store.activeTeam = d;
     const teamSidebar = document.getElementById('team-sidebar');
+    teamSidebar.style.top = `${d.y-15}px`;
+    teamSidebar.style.left = `${d.x-15}px`;
     teamSidebar.style.display = 'flex';
     updateTeamShow();
   }

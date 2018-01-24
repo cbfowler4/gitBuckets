@@ -141,7 +141,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var updateTeamShow = exports.updateTeamShow = function updateTeamShow() {
   var teamShow = document.getElementById('team-sidebar');
 
-  teamShow.innerHTML = '<h1>' + (_store2.default.activeTeam != null ? (0, _data_util.formatTeamName)(_store2.default.activeTeam.teamName) : "") + '</h1>\n    <img src="assets/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.wins : "") + '</li>\n      <li>Losses: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.losses : "") + '</li>\n    </ul>';
+  // `<h1>${Store.activeTeam != null ? formatTeamName(Store.activeTeam.teamName) : ""}</h1>
+  teamShow.innerHTML = '<img src="assets/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.wins : "") + '</li>\n      <li>Losses: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.losses : "") + '</li>\n    </ul>';
 };
 
 /***/ }),
@@ -341,6 +342,8 @@ var Nodes = function () {
     value: function handleMouseover(d) {
       _store2.default.activeTeam = d;
       var teamSidebar = document.getElementById('team-sidebar');
+      teamSidebar.style.top = d.y - 15 + 'px';
+      teamSidebar.style.left = d.x - 15 + 'px';
       teamSidebar.style.display = 'flex';
       (0, _team_show.updateTeamShow)();
     }

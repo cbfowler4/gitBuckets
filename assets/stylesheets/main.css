@@ -106,23 +106,26 @@ svg {
 }
 
 #team-sidebar {
-  padding: 20px;
+  padding: 15px;
   margin: 50px;
-  height: 250px;
-  width: 250px;
+  height: 160px;
+  width: 140px;
   display: none;
   flex-direction: column;
   align-items: center;
   position: absolute;
+  background-color: #FFFFFF;
+  top: 10px;
   border: 2px solid #364d70;
   box-shadow: rgba(0,0,0,.1) 2px 2px 2px;
+  border-radius: 3px;
 }
 
 #team-sidebar img {
   height: 100px;
-  width: 100px;
+  width: 150px;
   object-fit: contain;
-  margin: 20px 0;
+  margin: 0 0 5px 0;
 }
 
 #team-sidebar h1 {
