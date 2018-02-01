@@ -5,8 +5,6 @@
   margin: 0;
 }
 
-
-
 html {
   object-fit: cover;
   height: 100%;
@@ -16,6 +14,7 @@ html {
 body {
   display: flex;
   height: inherit;
+  overflow: hidden;
 }
 
 header {
