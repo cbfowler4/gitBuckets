@@ -1,7 +1,7 @@
 import Store from '../store/store';
 
 export const boundaries = (node, width, height) => {
-  const buffer = 35;
+  const buffer = 30;
   if (node.x - node.radius < buffer) {
     node.x = node.radius + buffer;
   } else if (node.x + node.radius > width - buffer){

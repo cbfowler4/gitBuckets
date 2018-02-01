@@ -140,8 +140,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var updateTeamShow = exports.updateTeamShow = function updateTeamShow() {
   var teamShow = document.getElementById('team-sidebar');
+  var activeNode = document.getElementById(_store2.default.activeTeam.teamName);
 
-  // `<h1>${Store.activeTeam != null ? formatTeamName(Store.activeTeam.teamName) : ""}</h1>
   teamShow.innerHTML = '<img src="assets/images/logos/' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.logo : "nba.png") + '"></img>\n    <ul>\n      <li>Wins: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.wins : "") + '</li>\n      <li>Losses: ' + (_store2.default.activeTeam != null ? _store2.default.activeTeam.losses : "") + '</li>\n    </ul>';
 };
 
@@ -342,9 +342,12 @@ var Nodes = function () {
     value: function handleMouseover(d) {
       _store2.default.activeTeam = d;
       var teamSidebar = document.getElementById('team-sidebar');
-      teamSidebar.style.top = d.y - 15 + 'px';
-      teamSidebar.style.left = d.x - 15 + 'px';
+
+      // debugger
+      teamSidebar.style.top = d.y + 200 > window.innerHeight ? '' + (window.innerHeight - (d.y + 200)) : d.y - d.radius + 'px';
+      teamSidebar.style.left = d.x - 20 + 'px';
       teamSidebar.style.display = 'flex';
+
       (0, _team_show.updateTeamShow)();
     }
   }, {
@@ -439,7 +442,7 @@ var _store2 = _interopRequireDefault(_store);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var boundaries = exports.boundaries = function boundaries(node, width, height) {
-  var buffer = 35;
+  var buffer = 30;
   if (node.x - node.radius < buffer) {
     node.x = node.radius + buffer;
   } else if (node.x + node.radius > width - buffer) {
