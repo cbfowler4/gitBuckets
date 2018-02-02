@@ -3,7 +3,8 @@ const store = {
   selectedYear: 1996,
   nodes: null,
   seasonData: null,
-  done: false
+  done: false,
+  logos: []
 };
 
 export default store;

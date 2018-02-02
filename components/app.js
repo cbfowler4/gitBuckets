@@ -3,6 +3,7 @@ import Nodes from './nodes';
 import Slider from './slider';
 import Store from '../store/store';
 import data from '../data/team_data.json';
+import { setupTeamShow } from './team_show';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -18,5 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   Store.nodes = new Nodes(svg);
 
   const slider = new Slider();
+
+  setupTeamShow();
 
 });

@@ -127,10 +127,10 @@ class Nodes {
     Store.activeTeam = d;
     const teamSidebar = document.getElementById('team-sidebar');
 
-    // debugger
     teamSidebar.style.top = (d.y+200 > window.innerHeight) ?
       `${window.innerHeight - (d.y+200)}` : `${d.y-d.radius}px`;
-    teamSidebar.style.left = `${d.x-20}px`;
+    teamSidebar.style.left = (d.x+200 > window.innerWidth*.7) ?
+      `${window.innerWidth*.7 - (d.x+200)}` : `${d.x-20 }px`;
     teamSidebar.style.display = 'flex';
 
     updateTeamShow();
